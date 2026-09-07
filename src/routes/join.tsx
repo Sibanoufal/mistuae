@@ -38,7 +38,11 @@ function Join() {
   const [photoName, setPhotoName] = useState(profile?.idPhotoName ?? "");
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [crossCampusOnly, setCrossCampusOnly] = useState(profile?.crossCampusOnly ?? false);
-  const [alias] = useState(profile?.alias ?? randomAlias());
+  const [alias, setAlias] = useState("");
+
+  useEffect(() => {
+    setAlias((current) => current || profile?.alias || randomAlias());
+  }, [profile?.alias]);
   const [error, setError] = useState<string | null>(null);
 
   function onPhoto(file: File | undefined) {
