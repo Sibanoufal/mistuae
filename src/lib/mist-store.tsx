@@ -433,7 +433,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
                 author: "system",
                 system: true,
                 at: Date.now(),
-                text: `${other.alias} revealed too — say hi to ${other.revealedName}.`,
+                text: `${other.alias} revealed too — say hi to ${other.revealedName}`,
               },
             ],
           };
