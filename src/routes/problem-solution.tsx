@@ -211,7 +211,7 @@ function ProblemSolution() {
             <p className="text-pretty text-muted-foreground">
               <strong className="text-ink">For the country&apos;s student ecosystem.</strong> Five
               universities sit minutes apart in the UAE and barely mix. Cross-campus anonymous pairing
-              quietly builds a single student community out of five separate ones — and turns it into
+              quietly builds a single student community out of ten separate ones — and turns it into
               coffee, events and real projects.
             </p>
           </div>
