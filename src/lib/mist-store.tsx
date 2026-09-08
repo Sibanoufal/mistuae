@@ -396,6 +396,8 @@ type Ctx = {
   profile: Profile | null;
   threads: Thread[];
   posts: BoardPost[];
+  penPal: PenPal | null;
+  letters: Letter[];
   saveProfile: (p: Profile) => void;
   signOut: () => void;
   createThread: (opts: {
@@ -409,12 +411,24 @@ type Ctx = {
   closeThread: (threadId: string) => void;
   addPost: (p: Omit<BoardPost, "id" | "responses" | "joined" | "mine">) => void;
   toggleJoin: (postId: string) => void;
+  assignPenPal: () => void;
+  sendLetter: (subject: string, body: string, seal: SealColor) => void;
+  markLetterRead: (id: string) => void;
+  proposeGreatReveal: () => void;
 };
 
 const MistContext = createContext<Ctx | null>(null);
 
+function campusPool(profile: Profile | null): University[] {
+  if (!profile) return [...UNIVERSITIES];
+  const pref: CampusPref = profile.campusPref ?? (profile.crossCampusOnly ? "cross" : "any");
+  if (pref === "cross") return UNIVERSITIES.filter((u) => u !== profile.university);
+  if (pref === "same") return [profile.university];
+  return [...UNIVERSITIES];
+}
+
 export function MistProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<State>({ profile: null, threads: [], posts: SEED_POSTS });
+  const [state, setState] = useState<State>(EMPTY_STATE);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -436,7 +450,103 @@ export function MistProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signOut = useCallback(() => {
-    setState({ profile: null, threads: [], posts: SEED_POSTS });
+    setState(EMPTY_STATE());
+  }, []);
+
+  const assignPenPal = useCallback(() => {
+    setState((s) => {
+      if (s.penPal || !s.profile) return s;
+      const pool = campusPool(s.profile);
+      const now = Date.now();
+      const opener = LETTER_OPENERS[Math.floor(Math.random() * LETTER_OPENERS.length)]!;
+      const penPal: PenPal = {
+        alias: randomAlias(),
+        university: pool[Math.floor(Math.random() * pool.length)]!,
+        revealedName: FAKE_NAMES[Math.floor(Math.random() * FAKE_NAMES.length)]!,
+        sharedInterest: s.profile.interests[0] ?? "Design",
+        since: now,
+        greatReveal: { mine: false, theirs: false, agreedAt: null },
+      };
+      const first: Letter = {
+        id: uid(),
+        fromMe: false,
+        subject: opener.subject,
+        body: `${opener.body}\n${penPal.alias}`,
+        sentAt: now - 6 * 60 * 60 * 1000,
+        deliverAt: now,
+        read: false,
+        seal: "lilac",
+      };
+      return { ...s, penPal, letters: [first] };
+    });
+  }, []);
+
+  const sendLetter = useCallback<Ctx["sendLetter"]>((subject, body, seal) => {
+    const s0 = subject.trim().slice(0, 80);
+    const b0 = body.trim().slice(0, 2000);
+    if (!b0) return;
+    const now = Date.now();
+    setState((s) => {
+      const lastMine = s.letters.filter((l) => l.fromMe).sort((a, b) => b.sentAt - a.sentAt)[0];
+      if (lastMine && now - lastMine.sentAt < LETTER_INTERVAL_MS) return s;
+      const mine: Letter = {
+        id: uid(),
+        fromMe: true,
+        subject: s0 || "(no subject)",
+        body: b0,
+        sentAt: now,
+        deliverAt: now,
+        read: true,
+        seal,
+      };
+      return { ...s, letters: [mine, ...s.letters] };
+    });
+    window.setTimeout(() => {
+      setState((s) => {
+        if (!s.penPal) return s;
+        const reply = LETTER_REPLIES[Math.floor(Math.random() * LETTER_REPLIES.length)]!;
+        const t = Date.now();
+        const letter: Letter = {
+          id: uid(),
+          fromMe: false,
+          subject: reply.subject,
+          body: `${reply.body}\n${s.penPal.alias}`,
+          sentAt: t,
+          deliverAt: t,
+          read: false,
+          seal: (["coral", "teal", "lilac", "butter"] as SealColor[])[
+            Math.floor(Math.random() * 4)
+          ]!,
+        };
+        return { ...s, letters: [letter, ...s.letters] };
+      });
+    }, DEMO_DELIVERY_MS);
+  }, []);
+
+  const markLetterRead = useCallback<Ctx["markLetterRead"]>((id) => {
+    setState((s) => ({
+      ...s,
+      letters: s.letters.map((l) => (l.id === id ? { ...l, read: true } : l)),
+    }));
+  }, []);
+
+  const proposeGreatReveal = useCallback(() => {
+    setState((s) =>
+      s.penPal ? { ...s, penPal: { ...s.penPal, greatReveal: { ...s.penPal.greatReveal, mine: true } } } : s,
+    );
+    window.setTimeout(() => {
+      setState((s) =>
+        s.penPal && s.penPal.greatReveal.mine
+          ? {
+              ...s,
+              penPal: {
+                ...s.penPal,
+                greatReveal: { mine: true, theirs: true, agreedAt: Date.now() },
+              },
+            }
+          : s,
+      );
+    }, 3200);
   }, []);
 
   const createThread = useCallback<Ctx["createThread"]>(
@@ -449,9 +559,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
         isMe: true,
       };
       const otherCount = mode === "pair" ? 1 : 2 + Math.floor(Math.random() * 2);
-      const pool = UNIVERSITIES.filter((u) =>
-        state.profile?.crossCampusOnly ? u !== state.profile.university : true,
-      );
+      const pool = campusPool(state.profile);
       const others: Member[] = Array.from({ length: otherCount }, (_, i) => ({
         alias: randomAlias(),
         university: pool[Math.floor(Math.random() * pool.length)]!,
