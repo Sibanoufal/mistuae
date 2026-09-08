@@ -751,6 +751,8 @@ export function MistProvider({ children }: { children: ReactNode }) {
       profile: state.profile,
       threads: state.threads,
       posts: state.posts,
+      penPal: state.penPal,
+      letters: state.letters,
       saveProfile,
       signOut,
       createThread,
@@ -760,6 +762,10 @@ export function MistProvider({ children }: { children: ReactNode }) {
       closeThread,
       addPost,
       toggleJoin,
+      assignPenPal,
+      sendLetter,
+      markLetterRead,
+      proposeGreatReveal,
     }),
     [
       ready,
@@ -773,6 +779,10 @@ export function MistProvider({ children }: { children: ReactNode }) {
       closeThread,
       addPost,
       toggleJoin,
+      assignPenPal,
+      sendLetter,
+      markLetterRead,
+      proposeGreatReveal,
     ],
   );
 
