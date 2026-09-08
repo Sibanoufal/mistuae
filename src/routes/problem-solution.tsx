@@ -88,6 +88,18 @@ const FEATURES = [
     body: "Coffee chats, event partners and project collabs turn a vague 'I'm lonely' into a concrete, low-risk invitation.",
   },
   {
+    title: "Digital letters, one a day",
+    body: "The Letter Inbox caps pen pals at one letter per day. Deliberate slowness is the antidote to the addictive loop of instant messaging — you think before you write, and nobody is refreshing at 2am.",
+  },
+  {
+    title: "The Great Reveal",
+    body: "At the end of the semester, pen pals can mutually agree to unlock identities and meet at an official campus booth. It only happens if both say yes.",
+  },
+  {
+    title: "Inter-campus by default",
+    body: "All ten universities share one pool. You can choose any campus, other campuses only, or your own — Mist never traps you inside a single institution.",
+  },
+  {
     title: "Built for different needs",
     body: "Keyboard navigable, screen-reader labelled, high-contrast text, respects reduced-motion, and text-first so it works for shy, neurodivergent and non-native-English students alike.",
   },
