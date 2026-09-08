@@ -2,10 +2,12 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { MistShell } from "@/components/MistShell";
 import {
+  CAMPUS_PREF_LABEL,
   INTERESTS,
   UNIVERSITIES,
   randomAlias,
   useMist,
+  type CampusPref,
   type University,
 } from "@/lib/mist-store";
 
@@ -37,7 +39,9 @@ function Join() {
   const [interests, setInterests] = useState<string[]>(profile?.interests ?? []);
   const [photoName, setPhotoName] = useState(profile?.idPhotoName ?? "");
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [crossCampusOnly, setCrossCampusOnly] = useState(profile?.crossCampusOnly ?? false);
+  const [campusPref, setCampusPref] = useState<CampusPref>(
+    profile?.campusPref ?? (profile?.crossCampusOnly ? "cross" : "any"),
+  );
   const [alias, setAlias] = useState("");
 
   useEffect(() => {
@@ -91,9 +95,10 @@ function Join() {
       idPhotoName: photoName,
       verified: true,
       realName: realName.trim().slice(0, 40),
-      crossCampusOnly,
+      crossCampusOnly: campusPref === "cross",
+      campusPref,
     });
-    navigate({ to: "/match" });
+    navigate({ to: "/letters" });
   }
 
   return (
@@ -227,20 +232,33 @@ function Join() {
             </div>
           </fieldset>
 
-          <label className="mt-6 flex items-start gap-3 rounded-2xl bg-surface/60 p-4 text-sm">
-            <input
-              type="checkbox"
-              checked={crossCampusOnly}
-              onChange={(e) => setCrossCampusOnly(e.target.checked)}
-              className="mt-0.5 size-4 accent-teal"
-            />
-            <span>
-              <strong>Match me outside my own university.</strong>
-              <span className="block text-muted-foreground">
-                Useful if you&apos;d rather not bump into your match in the cafeteria tomorrow.
-              </span>
-            </span>
-          </label>
+          <fieldset className="mt-6">
+            <legend className="text-sm font-semibold">Who can you be paired with?</legend>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Mist is inter-campus by default — all ten universities share one pool.
+            </p>
+            <div className="mt-3 grid gap-2 sm:grid-cols-3">
+              {(Object.keys(CAMPUS_PREF_LABEL) as CampusPref[]).map((k) => {
+                const on = campusPref === k;
+                return (
+                  <button
+                    type="button"
+                    key={k}
+                    aria-pressed={on}
+                    onClick={() => setCampusPref(k)}
+                    className={`rounded-2xl border p-3 text-left transition-transform hover:-translate-y-0.5 ${
+                      on ? "border-teal bg-teal/10" : "border-line bg-card"
+                    }`}
+                  >
+                    <span className="block text-sm font-semibold">{CAMPUS_PREF_LABEL[k].title}</span>
+                    <span className="mt-0.5 block text-xs text-muted-foreground">
+                      {CAMPUS_PREF_LABEL[k].body}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
 
           {error ? (
             <p role="alert" className="mt-5 rounded-2xl bg-coral/15 px-4 py-3 text-sm text-ink">
@@ -257,7 +275,7 @@ function Join() {
               type="submit"
               className="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-background transition-transform hover:-translate-y-0.5"
             >
-              Verify &amp; continue to matching
+              Verify &amp; meet my pen pal
             </button>
           </div>
         </form>

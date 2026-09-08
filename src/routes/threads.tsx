@@ -26,10 +26,10 @@ function Threads() {
   return (
     <MistShell>
       <div className="py-8">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3">
+          <div className="min-w-0">
             <p className="font-mono text-[11px] tracking-widest text-coral uppercase">Your mask</p>
-            <h1 className="text-4xl font-extrabold tracking-tight">
+            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
               {profile ? profile.alias : "Not verified yet"}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -37,6 +37,11 @@ function Threads() {
                 ? `${profile.university} · ${profile.year} · verified by student ID`
                 : "Verify your student ID to start."}
             </p>
+            {profile ? (
+              <Link to="/letters" className="mt-2 inline-block text-sm font-semibold text-plum">
+                Open your letter inbox →
+              </Link>
+            ) : null}
           </div>
           {profile ? (
             <button

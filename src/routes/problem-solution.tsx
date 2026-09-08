@@ -69,7 +69,7 @@ const INTERVIEWS = [
 const FEATURES = [
   {
     title: "Student-ID-gated entry",
-    body: "Only verified students at the five UAE universities get in, so the pool is real people from real campuses.",
+    body: "Only verified students at the ten UAE universities get in, so the pool is real people from real campuses.",
   },
   {
     title: "Masks by default",
@@ -134,7 +134,7 @@ function ProblemSolution() {
           </h2>
           <p className="mt-2 max-w-[62ch] text-muted-foreground">
             Desk research on student wellbeing and the UAE higher-education landscape, plus short
-            informal interviews with students across the five campuses this platform serves.
+            informal interviews with students across the ten campuses this platform serves.
           </p>
           <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {RESEARCH.map((r) => (

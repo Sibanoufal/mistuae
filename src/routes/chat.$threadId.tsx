@@ -229,6 +229,12 @@ function Chat() {
             Shared interest: {thread.sharedInterest}. Either of you can reveal, anytime. No pressure,
             ever.
           </p>
+          <Link
+            to="/letters"
+            className="mt-3 rounded-2xl bg-butter px-4 py-3 text-center text-xs font-semibold text-butter-foreground transition-transform hover:-translate-y-0.5"
+          >
+            Prefer slow? Write a daily letter instead →
+          </Link>
         </aside>
       </div>
     </MistShell>
