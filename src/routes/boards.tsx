@@ -20,7 +20,7 @@ export const Route = createFileRoute("/boards")({
       { property: "og:title", content: "Coffee chats, event partners & project collabs — Mist" },
       {
         property: "og:description",
-        content: "Anonymous invitations from verified students at five UAE universities.",
+        content: "Anonymous invitations from verified students at ten UAE universities.",
       },
     ],
   }),

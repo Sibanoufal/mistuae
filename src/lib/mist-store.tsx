@@ -14,7 +14,53 @@ export const UNIVERSITIES = [
   "American University of Sharjah",
   "Heriot-Watt University Dubai",
   "University of Wollongong in Dubai",
+  "Manipal Academy of Higher Education Dubai",
+  "BITS Pilani Dubai",
+  "Murdoch University Dubai",
+  "University of Sharjah",
+  "Amity University Dubai",
 ] as const;
+
+export const UNIVERSITY_SHORT: Record<University, string> = {
+  "RIT Dubai": "RIT",
+  "Middlesex University Dubai": "MDX",
+  "American University of Sharjah": "AUS",
+  "Heriot-Watt University Dubai": "Heriot-Watt",
+  "University of Wollongong in Dubai": "UOWD",
+  "Manipal Academy of Higher Education Dubai": "Manipal",
+  "BITS Pilani Dubai": "BITS",
+  "Murdoch University Dubai": "Murdoch",
+  "University of Sharjah": "UOS",
+  "Amity University Dubai": "Amity",
+};
+
+export type CampusPref = "any" | "cross" | "same";
+
+export const CAMPUS_PREF_LABEL: Record<CampusPref, { title: string; body: string }> = {
+  any: {
+    title: "Any campus",
+    body: "Mix across all ten UAE universities — the widest pool.",
+  },
+  cross: {
+    title: "Other campuses only",
+    body: "Never someone from your own university.",
+  },
+  same: {
+    title: "My campus only",
+    body: "Handy if you want to meet up between lectures.",
+  },
+};
+
+export const GREAT_REVEAL_EVENT = {
+  name: "The Great Reveal",
+  date: "Thu 10 Dec 2026 · 5:00 PM",
+  venue: "Meetup booth, RIT Dubai atrium (Silicon Oasis)",
+  note: "Satellite booths at AUS, UOS and Knowledge Park the same evening.",
+};
+
+export const LETTER_INTERVAL_MS = 24 * 60 * 60 * 1000;
+/** Demo post: replies arrive after this delay instead of next morning. */
+const DEMO_DELIVERY_MS = 40 * 1000;
 
 export type University = (typeof UNIVERSITIES)[number];
 
@@ -57,7 +103,30 @@ export type Profile = {
   verified: boolean;
   realName: string;
   crossCampusOnly: boolean;
+  campusPref?: CampusPref;
   reducedMotion?: boolean;
+};
+
+export type SealColor = "coral" | "teal" | "lilac" | "butter";
+
+export type Letter = {
+  id: string;
+  fromMe: boolean;
+  subject: string;
+  body: string;
+  sentAt: number;
+  deliverAt: number;
+  read: boolean;
+  seal: SealColor;
+};
+
+export type PenPal = {
+  alias: string;
+  university: University;
+  revealedName: string;
+  sharedInterest: string;
+  since: number;
+  greatReveal: { mine: boolean; theirs: boolean; agreedAt: number | null };
 };
 
 export type Member = {
@@ -108,9 +177,19 @@ type State = {
   profile: Profile | null;
   threads: Thread[];
   posts: BoardPost[];
+  penPal: PenPal | null;
+  letters: Letter[];
 };
 
-const STORAGE_KEY = "mist.state.v1";
+const STORAGE_KEY = "mist.state.v2";
+
+const EMPTY_STATE = (): State => ({
+  profile: null,
+  threads: [],
+  posts: SEED_POSTS,
+  penPal: null,
+  letters: [],
+});
 
 const ADJECTIVES = [
   "Auburn",
@@ -214,21 +293,82 @@ const SEED_POSTS: BoardPost[] = [
     responses: 6,
     joined: false,
   },
+  {
+    id: "p7",
+    kind: "coffee",
+    title: "BITS to Manipal is a 12 minute walk. Anyone?",
+    body: "Same road, never met anyone from next door. Chai at the Academic City food street?",
+    university: "BITS Pilani Dubai",
+    when: "Tue 3:30 PM · Academic City",
+    alias: "Indigo Heron",
+    responses: 11,
+    joined: false,
+  },
+  {
+    id: "p8",
+    kind: "project",
+    title: "Murdoch media student needs a UOS science brain",
+    body: "Making a short doc on Sharjah's night sky. Need someone who can explain light pollution on camera.",
+    university: "Murdoch University Dubai",
+    when: "Shooting over 3 weekends",
+    alias: "Velvet Ibis",
+    responses: 4,
+    joined: false,
+  },
+  {
+    id: "p9",
+    kind: "event",
+    title: "Amity cultural night — need a plus one who dances badly",
+    body: "So I'm not the only one. Open to any campus, the bus from Sharjah is easy.",
+    university: "Amity University Dubai",
+    when: "Wed 6:30 PM · DIAC",
+    alias: "Saffron Fox",
+    responses: 14,
+    joined: false,
+  },
+];
+
+const LETTER_OPENERS = [
+  {
+    subject: "First letter, no pressure",
+    body: "Dear stranger,\n\nI've never written a letter to someone I can't see. It's weirdly freeing. I'm writing this from the library between two lectures I'm not fully awake for.\n\nTell me one thing about your week that nobody else knows. I'll go first: I've eaten the same shawarma for lunch four days in a row and I regret nothing.\n\nYours, masked,",
+  },
+  {
+    subject: "Postmarked from a very quiet campus",
+    body: "Hi,\n\nThey said one letter a day, so I'm making this one count. I picked the same interest as you, which means we probably would have spoken at some event and both left early.\n\nWhat are you actually doing at university? Not the degree — the real reason.\n\nWrite back when the sun is up,",
+  },
+];
+
+const LETTER_REPLIES = [
+  {
+    subject: "Re: your letter",
+    body: "I read your letter twice, which I never do with texts.\n\nYou asked a real question so here's a real answer: I'm here because I wanted to start over somewhere nobody knew me. It worked a bit too well — hence the pen pal.\n\nYour turn. What would you tell me if you knew we'd never meet?\n\nUntil tomorrow,",
+  },
+  {
+    subject: "Slow post, fast heart",
+    body: "Waiting a full day for this reply was strangely nice. I actually thought about what to say.\n\nI'm from a campus across the city from yours, I think. If we make it to the end of term, I might be brave enough for the Great Reveal. Might.\n\nStill masked, still writing,",
+  },
+  {
+    subject: "Re: the shawarma situation",
+    body: "Four days in a row is commitment. I respect it.\n\nMy week: I finally joined a club, sat in the corner, said nothing, and counted it as growth. Anonymous letters are apparently my comfort zone.\n\nSend me a song for the bus tomorrow.\n\nWith ink-stained thumbs,",
+  },
 ];
 
 function loadState(): State {
-  if (typeof window === "undefined") return { profile: null, threads: [], posts: SEED_POSTS };
+  if (typeof window === "undefined") return EMPTY_STATE();
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { profile: null, threads: [], posts: SEED_POSTS };
-    const parsed = JSON.parse(raw) as State;
+    if (!raw) return EMPTY_STATE();
+    const parsed = JSON.parse(raw) as Partial<State>;
     return {
       profile: parsed.profile ?? null,
       threads: parsed.threads ?? [],
       posts: parsed.posts?.length ? parsed.posts : SEED_POSTS,
+      penPal: parsed.penPal ?? null,
+      letters: parsed.letters ?? [],
     };
   } catch {
-    return { profile: null, threads: [], posts: SEED_POSTS };
+    return EMPTY_STATE();
   }
 }
 
@@ -256,6 +396,8 @@ type Ctx = {
   profile: Profile | null;
   threads: Thread[];
   posts: BoardPost[];
+  penPal: PenPal | null;
+  letters: Letter[];
   saveProfile: (p: Profile) => void;
   signOut: () => void;
   createThread: (opts: {
@@ -269,12 +411,24 @@ type Ctx = {
   closeThread: (threadId: string) => void;
   addPost: (p: Omit<BoardPost, "id" | "responses" | "joined" | "mine">) => void;
   toggleJoin: (postId: string) => void;
+  assignPenPal: () => void;
+  sendLetter: (subject: string, body: string, seal: SealColor) => void;
+  markLetterRead: (id: string) => void;
+  proposeGreatReveal: () => void;
 };
 
 const MistContext = createContext<Ctx | null>(null);
 
+function campusPool(profile: Profile | null): University[] {
+  if (!profile) return [...UNIVERSITIES];
+  const pref: CampusPref = profile.campusPref ?? (profile.crossCampusOnly ? "cross" : "any");
+  if (pref === "cross") return UNIVERSITIES.filter((u) => u !== profile.university);
+  if (pref === "same") return [profile.university];
+  return [...UNIVERSITIES];
+}
+
 export function MistProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<State>({ profile: null, threads: [], posts: SEED_POSTS });
+  const [state, setState] = useState<State>(EMPTY_STATE);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -296,7 +450,103 @@ export function MistProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signOut = useCallback(() => {
-    setState({ profile: null, threads: [], posts: SEED_POSTS });
+    setState(EMPTY_STATE());
+  }, []);
+
+  const assignPenPal = useCallback(() => {
+    setState((s) => {
+      if (s.penPal || !s.profile) return s;
+      const pool = campusPool(s.profile);
+      const now = Date.now();
+      const opener = LETTER_OPENERS[Math.floor(Math.random() * LETTER_OPENERS.length)]!;
+      const penPal: PenPal = {
+        alias: randomAlias(),
+        university: pool[Math.floor(Math.random() * pool.length)]!,
+        revealedName: FAKE_NAMES[Math.floor(Math.random() * FAKE_NAMES.length)]!,
+        sharedInterest: s.profile.interests[0] ?? "Design",
+        since: now,
+        greatReveal: { mine: false, theirs: false, agreedAt: null },
+      };
+      const first: Letter = {
+        id: uid(),
+        fromMe: false,
+        subject: opener.subject,
+        body: `${opener.body}\n${penPal.alias}`,
+        sentAt: now - 6 * 60 * 60 * 1000,
+        deliverAt: now,
+        read: false,
+        seal: "lilac",
+      };
+      return { ...s, penPal, letters: [first] };
+    });
+  }, []);
+
+  const sendLetter = useCallback<Ctx["sendLetter"]>((subject, body, seal) => {
+    const s0 = subject.trim().slice(0, 80);
+    const b0 = body.trim().slice(0, 2000);
+    if (!b0) return;
+    const now = Date.now();
+    setState((s) => {
+      const lastMine = s.letters.filter((l) => l.fromMe).sort((a, b) => b.sentAt - a.sentAt)[0];
+      if (lastMine && now - lastMine.sentAt < LETTER_INTERVAL_MS) return s;
+      const mine: Letter = {
+        id: uid(),
+        fromMe: true,
+        subject: s0 || "(no subject)",
+        body: b0,
+        sentAt: now,
+        deliverAt: now,
+        read: true,
+        seal,
+      };
+      return { ...s, letters: [mine, ...s.letters] };
+    });
+    window.setTimeout(() => {
+      setState((s) => {
+        if (!s.penPal) return s;
+        const reply = LETTER_REPLIES[Math.floor(Math.random() * LETTER_REPLIES.length)]!;
+        const t = Date.now();
+        const letter: Letter = {
+          id: uid(),
+          fromMe: false,
+          subject: reply.subject,
+          body: `${reply.body}\n${s.penPal.alias}`,
+          sentAt: t,
+          deliverAt: t,
+          read: false,
+          seal: (["coral", "teal", "lilac", "butter"] as SealColor[])[
+            Math.floor(Math.random() * 4)
+          ]!,
+        };
+        return { ...s, letters: [letter, ...s.letters] };
+      });
+    }, DEMO_DELIVERY_MS);
+  }, []);
+
+  const markLetterRead = useCallback<Ctx["markLetterRead"]>((id) => {
+    setState((s) => ({
+      ...s,
+      letters: s.letters.map((l) => (l.id === id ? { ...l, read: true } : l)),
+    }));
+  }, []);
+
+  const proposeGreatReveal = useCallback(() => {
+    setState((s) =>
+      s.penPal ? { ...s, penPal: { ...s.penPal, greatReveal: { ...s.penPal.greatReveal, mine: true } } } : s,
+    );
+    window.setTimeout(() => {
+      setState((s) =>
+        s.penPal && s.penPal.greatReveal.mine
+          ? {
+              ...s,
+              penPal: {
+                ...s.penPal,
+                greatReveal: { mine: true, theirs: true, agreedAt: Date.now() },
+              },
+            }
+          : s,
+      );
+    }, 3200);
   }, []);
 
   const createThread = useCallback<Ctx["createThread"]>(
@@ -309,9 +559,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
         isMe: true,
       };
       const otherCount = mode === "pair" ? 1 : 2 + Math.floor(Math.random() * 2);
-      const pool = UNIVERSITIES.filter((u) =>
-        state.profile?.crossCampusOnly ? u !== state.profile.university : true,
-      );
+      const pool = campusPool(state.profile);
       const others: Member[] = Array.from({ length: otherCount }, (_, i) => ({
         alias: randomAlias(),
         university: pool[Math.floor(Math.random() * pool.length)]!,
@@ -503,6 +751,8 @@ export function MistProvider({ children }: { children: ReactNode }) {
       profile: state.profile,
       threads: state.threads,
       posts: state.posts,
+      penPal: state.penPal,
+      letters: state.letters,
       saveProfile,
       signOut,
       createThread,
@@ -512,6 +762,10 @@ export function MistProvider({ children }: { children: ReactNode }) {
       closeThread,
       addPost,
       toggleJoin,
+      assignPenPal,
+      sendLetter,
+      markLetterRead,
+      proposeGreatReveal,
     }),
     [
       ready,
@@ -525,6 +779,10 @@ export function MistProvider({ children }: { children: ReactNode }) {
       closeThread,
       addPost,
       toggleJoin,
+      assignPenPal,
+      sendLetter,
+      markLetterRead,
+      proposeGreatReveal,
     ],
   );
 

@@ -30,6 +30,14 @@
   --color-aqua: var(--aqua);
   --color-coral: var(--coral);
   --color-coral-foreground: var(--coral-foreground);
+  --color-lilac: var(--lilac);
+  --color-lilac-foreground: var(--lilac-foreground);
+  --color-butter: var(--butter);
+  --color-butter-foreground: var(--butter-foreground);
+  --color-mint: var(--mint);
+  --color-plum: var(--plum);
+  --color-paper: var(--paper);
+  --color-paper-line: var(--paper-line);
   --color-line: var(--line);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -41,6 +49,7 @@
   --color-input: var(--line);
 
   --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
   --font-mono: "DM Mono", ui-monospace, monospace;
 
   --animate-rise: rise 700ms cubic-bezier(0.32, 0.72, 0, 1) both;
@@ -48,6 +57,9 @@
   --animate-marq: marq 26s linear infinite;
   --animate-pop: pop 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
   --animate-unblur: unblur 900ms ease-out both;
+  --animate-wobble: wobble 6s ease-in-out infinite;
+  --animate-seal: seal 600ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-shimmer: shimmer 2.8s linear infinite;
 }
 
 :root {
@@ -63,6 +75,14 @@
   --aqua: oklch(0.771 0.088 191);
   --coral: oklch(0.693 0.152 33);
   --coral-foreground: oklch(0.995 0.004 60);
+  --lilac: oklch(0.72 0.13 300);
+  --lilac-foreground: oklch(0.99 0.005 300);
+  --butter: oklch(0.9 0.13 92);
+  --butter-foreground: oklch(0.3 0.05 80);
+  --mint: oklch(0.87 0.1 160);
+  --plum: oklch(0.42 0.14 320);
+  --paper: oklch(0.975 0.018 85);
+  --paper-line: oklch(0.62 0.05 60 / 0.35);
   --line: oklch(0.262 0.038 210 / 0.1);
   --card: oklch(1 0 0 / 0.62);
   --card-foreground: oklch(0.262 0.038 210);
@@ -158,10 +178,72 @@
   }
 }
 
+@keyframes wobble {
+  0%,
+  100% {
+    transform: rotate(-3deg) translateY(0);
+  }
+  50% {
+    transform: rotate(3deg) translateY(-8px);
+  }
+}
+
+@keyframes seal {
+  from {
+    transform: scale(0.4) rotate(-20deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
 @utility glass {
   background-color: var(--card);
   border: 1px solid oklch(1 0 0 / 0.6);
   backdrop-filter: blur(14px) saturate(140%);
+}
+
+@utility paper {
+  background-color: var(--paper);
+  background-image: repeating-linear-gradient(
+    transparent 0 27px,
+    var(--paper-line) 27px 28px
+  );
+  background-position: 0 6px;
+  border: 1px solid oklch(0.62 0.05 60 / 0.25);
+}
+
+@utility text-gradient {
+  background: linear-gradient(100deg, var(--teal), var(--lilac) 50%, var(--coral));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility shimmer-text {
+  background: linear-gradient(90deg, var(--ink), var(--teal), var(--coral), var(--lilac), var(--ink));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+
+@utility sticker {
+  box-shadow:
+    0 0 0 3px oklch(1 0 0),
+    0 8px 20px -8px oklch(0.262 0.038 210 / 0.4);
 }
 
 @utility caustic-blob {

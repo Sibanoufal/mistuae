@@ -69,7 +69,7 @@ const INTERVIEWS = [
 const FEATURES = [
   {
     title: "Student-ID-gated entry",
-    body: "Only verified students at the five UAE universities get in, so the pool is real people from real campuses.",
+    body: "Only verified students at the ten UAE universities get in, so the pool is real people from real campuses.",
   },
   {
     title: "Masks by default",
@@ -86,6 +86,18 @@ const FEATURES = [
   {
     title: "Anonymous intent boards",
     body: "Coffee chats, event partners and project collabs turn a vague 'I'm lonely' into a concrete, low-risk invitation.",
+  },
+  {
+    title: "Digital letters, one a day",
+    body: "The Letter Inbox caps pen pals at one letter per day. Deliberate slowness is the antidote to the addictive loop of instant messaging — you think before you write, and nobody is refreshing at 2am.",
+  },
+  {
+    title: "The Great Reveal",
+    body: "At the end of the semester, pen pals can mutually agree to unlock identities and meet at an official campus booth. It only happens if both say yes.",
+  },
+  {
+    title: "Inter-campus by default",
+    body: "All ten universities share one pool. You can choose any campus, other campuses only, or your own — Mist never traps you inside a single institution.",
   },
   {
     title: "Built for different needs",
@@ -134,7 +146,7 @@ function ProblemSolution() {
           </h2>
           <p className="mt-2 max-w-[62ch] text-muted-foreground">
             Desk research on student wellbeing and the UAE higher-education landscape, plus short
-            informal interviews with students across the five campuses this platform serves.
+            informal interviews with students across the ten campuses this platform serves.
           </p>
           <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {RESEARCH.map((r) => (
@@ -211,7 +223,7 @@ function ProblemSolution() {
             <p className="text-pretty text-muted-foreground">
               <strong className="text-ink">For the country&apos;s student ecosystem.</strong> Five
               universities sit minutes apart in the UAE and barely mix. Cross-campus anonymous pairing
-              quietly builds a single student community out of five separate ones — and turns it into
+              quietly builds a single student community out of ten separate ones — and turns it into
               coffee, events and real projects.
             </p>
           </div>
