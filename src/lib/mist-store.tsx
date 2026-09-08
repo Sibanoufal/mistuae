@@ -103,7 +103,30 @@ export type Profile = {
   verified: boolean;
   realName: string;
   crossCampusOnly: boolean;
+  campusPref?: CampusPref;
   reducedMotion?: boolean;
+};
+
+export type SealColor = "coral" | "teal" | "lilac" | "butter";
+
+export type Letter = {
+  id: string;
+  fromMe: boolean;
+  subject: string;
+  body: string;
+  sentAt: number;
+  deliverAt: number;
+  read: boolean;
+  seal: SealColor;
+};
+
+export type PenPal = {
+  alias: string;
+  university: University;
+  revealedName: string;
+  sharedInterest: string;
+  since: number;
+  greatReveal: { mine: boolean; theirs: boolean; agreedAt: number | null };
 };
 
 export type Member = {
