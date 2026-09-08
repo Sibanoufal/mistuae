@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BoardsRouteImport } from './routes/boards'
 import { Route as JoinRouteImport } from './routes/join'
+import { Route as LettersRouteImport } from './routes/letters'
 import { Route as MatchRouteImport } from './routes/match'
 import { Route as ProblemSolutionRouteImport } from './routes/problem-solution'
 import { Route as ThreadsRouteImport } from './routes/threads'
@@ -30,6 +31,11 @@ const BoardsRoute = BoardsRouteImport.update({
 const JoinRoute = JoinRouteImport.update({
   id: '/join',
   path: '/join',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LettersRoute = LettersRouteImport.update({
+  id: '/letters',
+  path: '/letters',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MatchRoute = MatchRouteImport.update({
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/boards': typeof BoardsRoute
   '/join': typeof JoinRoute
+  '/letters': typeof LettersRoute
   '/match': typeof MatchRoute
   '/problem-solution': typeof ProblemSolutionRoute
   '/threads': typeof ThreadsRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/boards': typeof BoardsRoute
   '/join': typeof JoinRoute
+  '/letters': typeof LettersRoute
   '/match': typeof MatchRoute
   '/problem-solution': typeof ProblemSolutionRoute
   '/threads': typeof ThreadsRoute
@@ -76,6 +84,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/boards': typeof BoardsRoute
   '/join': typeof JoinRoute
+  '/letters': typeof LettersRoute
   '/match': typeof MatchRoute
   '/problem-solution': typeof ProblemSolutionRoute
   '/threads': typeof ThreadsRoute
@@ -87,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/boards'
     | '/join'
+    | '/letters'
     | '/match'
     | '/problem-solution'
     | '/threads'
@@ -96,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/boards'
     | '/join'
+    | '/letters'
     | '/match'
     | '/problem-solution'
     | '/threads'
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/boards'
     | '/join'
+    | '/letters'
     | '/match'
     | '/problem-solution'
     | '/threads'
@@ -115,6 +127,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BoardsRoute: typeof BoardsRoute
   JoinRoute: typeof JoinRoute
+  LettersRoute: typeof LettersRoute
   MatchRoute: typeof MatchRoute
   ProblemSolutionRoute: typeof ProblemSolutionRoute
   ThreadsRoute: typeof ThreadsRoute
@@ -142,6 +155,13 @@ declare module '@tanstack/react-router' {
       path: '/join'
       fullPath: '/join'
       preLoaderRoute: typeof JoinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/letters': {
+      id: '/letters'
+      path: '/letters'
+      fullPath: '/letters'
+      preLoaderRoute: typeof LettersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/match': {
@@ -179,6 +199,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BoardsRoute: BoardsRoute,
   JoinRoute: JoinRoute,
+  LettersRoute: LettersRoute,
   MatchRoute: MatchRoute,
   ProblemSolutionRoute: ProblemSolutionRoute,
   ThreadsRoute: ThreadsRoute,
