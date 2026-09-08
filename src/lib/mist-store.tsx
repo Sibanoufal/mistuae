@@ -177,9 +177,19 @@ type State = {
   profile: Profile | null;
   threads: Thread[];
   posts: BoardPost[];
+  penPal: PenPal | null;
+  letters: Letter[];
 };
 
-const STORAGE_KEY = "mist.state.v1";
+const STORAGE_KEY = "mist.state.v2";
+
+const EMPTY_STATE = (): State => ({
+  profile: null,
+  threads: [],
+  posts: SEED_POSTS,
+  penPal: null,
+  letters: [],
+});
 
 const ADJECTIVES = [
   "Auburn",
@@ -283,21 +293,82 @@ const SEED_POSTS: BoardPost[] = [
     responses: 6,
     joined: false,
   },
+  {
+    id: "p7",
+    kind: "coffee",
+    title: "BITS to Manipal is a 12 minute walk. Anyone?",
+    body: "Same road, never met anyone from next door. Chai at the Academic City food street?",
+    university: "BITS Pilani Dubai",
+    when: "Tue 3:30 PM · Academic City",
+    alias: "Indigo Heron",
+    responses: 11,
+    joined: false,
+  },
+  {
+    id: "p8",
+    kind: "project",
+    title: "Murdoch media student needs a UOS science brain",
+    body: "Making a short doc on Sharjah's night sky. Need someone who can explain light pollution on camera.",
+    university: "Murdoch University Dubai",
+    when: "Shooting over 3 weekends",
+    alias: "Velvet Ibis",
+    responses: 4,
+    joined: false,
+  },
+  {
+    id: "p9",
+    kind: "event",
+    title: "Amity cultural night — need a plus one who dances badly",
+    body: "So I'm not the only one. Open to any campus, the bus from Sharjah is easy.",
+    university: "Amity University Dubai",
+    when: "Wed 6:30 PM · DIAC",
+    alias: "Saffron Fox",
+    responses: 14,
+    joined: false,
+  },
+];
+
+const LETTER_OPENERS = [
+  {
+    subject: "First letter, no pressure",
+    body: "Dear stranger,\n\nI've never written a letter to someone I can't see. It's weirdly freeing. I'm writing this from the library between two lectures I'm not fully awake for.\n\nTell me one thing about your week that nobody else knows. I'll go first: I've eaten the same shawarma for lunch four days in a row and I regret nothing.\n\nYours, masked,",
+  },
+  {
+    subject: "Postmarked from a very quiet campus",
+    body: "Hi,\n\nThey said one letter a day, so I'm making this one count. I picked the same interest as you, which means we probably would have spoken at some event and both left early.\n\nWhat are you actually doing at university? Not the degree — the real reason.\n\nWrite back when the sun is up,",
+  },
+];
+
+const LETTER_REPLIES = [
+  {
+    subject: "Re: your letter",
+    body: "I read your letter twice, which I never do with texts.\n\nYou asked a real question so here's a real answer: I'm here because I wanted to start over somewhere nobody knew me. It worked a bit too well — hence the pen pal.\n\nYour turn. What would you tell me if you knew we'd never meet?\n\nUntil tomorrow,",
+  },
+  {
+    subject: "Slow post, fast heart",
+    body: "Waiting a full day for this reply was strangely nice. I actually thought about what to say.\n\nI'm from a campus across the city from yours, I think. If we make it to the end of term, I might be brave enough for the Great Reveal. Might.\n\nStill masked, still writing,",
+  },
+  {
+    subject: "Re: the shawarma situation",
+    body: "Four days in a row is commitment. I respect it.\n\nMy week: I finally joined a club, sat in the corner, said nothing, and counted it as growth. Anonymous letters are apparently my comfort zone.\n\nSend me a song for the bus tomorrow.\n\nWith ink-stained thumbs,",
+  },
 ];
 
 function loadState(): State {
-  if (typeof window === "undefined") return { profile: null, threads: [], posts: SEED_POSTS };
+  if (typeof window === "undefined") return EMPTY_STATE();
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { profile: null, threads: [], posts: SEED_POSTS };
-    const parsed = JSON.parse(raw) as State;
+    if (!raw) return EMPTY_STATE();
+    const parsed = JSON.parse(raw) as Partial<State>;
     return {
       profile: parsed.profile ?? null,
       threads: parsed.threads ?? [],
       posts: parsed.posts?.length ? parsed.posts : SEED_POSTS,
+      penPal: parsed.penPal ?? null,
+      letters: parsed.letters ?? [],
     };
   } catch {
-    return { profile: null, threads: [], posts: SEED_POSTS };
+    return EMPTY_STATE();
   }
 }
 
