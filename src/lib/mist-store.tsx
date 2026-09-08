@@ -14,7 +14,53 @@ export const UNIVERSITIES = [
   "American University of Sharjah",
   "Heriot-Watt University Dubai",
   "University of Wollongong in Dubai",
+  "Manipal Academy of Higher Education Dubai",
+  "BITS Pilani Dubai",
+  "Murdoch University Dubai",
+  "University of Sharjah",
+  "Amity University Dubai",
 ] as const;
+
+export const UNIVERSITY_SHORT: Record<University, string> = {
+  "RIT Dubai": "RIT",
+  "Middlesex University Dubai": "MDX",
+  "American University of Sharjah": "AUS",
+  "Heriot-Watt University Dubai": "Heriot-Watt",
+  "University of Wollongong in Dubai": "UOWD",
+  "Manipal Academy of Higher Education Dubai": "Manipal",
+  "BITS Pilani Dubai": "BITS",
+  "Murdoch University Dubai": "Murdoch",
+  "University of Sharjah": "UOS",
+  "Amity University Dubai": "Amity",
+};
+
+export type CampusPref = "any" | "cross" | "same";
+
+export const CAMPUS_PREF_LABEL: Record<CampusPref, { title: string; body: string }> = {
+  any: {
+    title: "Any campus",
+    body: "Mix across all ten UAE universities — the widest pool.",
+  },
+  cross: {
+    title: "Other campuses only",
+    body: "Never someone from your own university.",
+  },
+  same: {
+    title: "My campus only",
+    body: "Handy if you want to meet up between lectures.",
+  },
+};
+
+export const GREAT_REVEAL_EVENT = {
+  name: "The Great Reveal",
+  date: "Thu 10 Dec 2026 · 5:00 PM",
+  venue: "Meetup booth, RIT Dubai atrium (Silicon Oasis)",
+  note: "Satellite booths at AUS, UOS and Knowledge Park the same evening.",
+};
+
+export const LETTER_INTERVAL_MS = 24 * 60 * 60 * 1000;
+/** Demo post: replies arrive after this delay instead of next morning. */
+const DEMO_DELIVERY_MS = 40 * 1000;
 
 export type University = (typeof UNIVERSITIES)[number];
 
