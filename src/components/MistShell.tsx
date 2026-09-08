@@ -4,6 +4,7 @@ import { useMist } from "@/lib/mist-store";
 
 const NAV = [
   { to: "/", label: "Home" },
+  { to: "/letters", label: "Letters" },
   { to: "/match", label: "Match" },
   { to: "/boards", label: "Boards" },
   { to: "/problem-solution", label: "Problem & Solution" },
@@ -12,15 +13,17 @@ const NAV = [
 export function CausticBackdrop() {
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      <div className="caustic-blob absolute -top-16 -left-16 size-[520px] rounded-full bg-teal/15 blur-3xl" />
-      <div className="caustic-blob absolute top-1/3 -right-24 size-[460px] rounded-full bg-aqua/25 blur-3xl" />
-      <div className="caustic-blob absolute bottom-0 left-1/4 size-[380px] rounded-full bg-coral/10 blur-3xl" />
+      <div className="caustic-blob absolute -top-24 -left-20 size-[420px] rounded-full bg-teal/20 blur-3xl sm:size-[560px]" />
+      <div className="caustic-blob absolute top-1/4 -right-28 size-[380px] rounded-full bg-lilac/30 blur-3xl [animation-delay:-4s] sm:size-[520px]" />
+      <div className="caustic-blob absolute bottom-10 left-1/3 size-[320px] rounded-full bg-butter/50 blur-3xl [animation-delay:-8s] sm:size-[440px]" />
+      <div className="caustic-blob absolute -bottom-24 -right-10 size-[300px] rounded-full bg-coral/20 blur-3xl [animation-delay:-2s] sm:size-[400px]" />
     </div>
   );
 }
 
 export function MistShell({ children }: { children: ReactNode }) {
-  const { profile } = useMist();
+  const { profile, letters } = useMist();
+  const unread = letters.filter((l) => !l.fromMe && !l.read).length;
 
   return (
     <div className="relative min-h-screen bg-background text-ink">
@@ -32,29 +35,37 @@ export function MistShell({ children }: { children: ReactNode }) {
         Skip to content
       </a>
 
-      <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-8">
         <header>
-          <nav aria-label="Main" className="flex flex-wrap items-center justify-between gap-3 py-5">
-            <Link to="/" className="flex items-center gap-2" aria-label="Mist home">
-              <span className="grid size-9 place-items-center rounded-2xl bg-ink font-bold text-background">
+          <nav
+            aria-label="Main"
+            className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-3 py-4 sm:py-5 md:flex md:justify-between"
+          >
+            <Link to="/" className="flex min-w-0 items-center gap-2" aria-label="Mist home">
+              <span className="grid size-9 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-teal via-lilac to-coral font-bold text-background">
                 M
               </span>
-              <span className="text-lg font-extrabold tracking-tight">Mist</span>
-              <span className="mt-1 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-                UAE
+              <span className="truncate text-lg font-extrabold tracking-tight">Mist</span>
+              <span className="mt-1 hidden font-mono text-[10px] tracking-widest text-muted-foreground uppercase sm:inline">
+                UAE · 10 campuses
               </span>
             </Link>
 
-            <ul className="order-3 flex w-full items-center gap-1 overflow-x-auto text-sm font-medium text-muted-foreground md:order-none md:w-auto md:gap-6 md:overflow-visible">
+            <ul className="order-3 col-span-2 -mx-4 flex items-center gap-1 overflow-x-auto px-4 pb-1 text-sm font-medium text-muted-foreground [scrollbar-width:none] md:order-none md:col-auto md:mx-0 md:gap-2 md:overflow-visible md:px-0 md:pb-0">
               {NAV.map((item) => (
-                <li key={item.to}>
+                <li key={item.to} className="shrink-0">
                   <Link
                     to={item.to}
-                    className="inline-block rounded-full px-3 py-1.5 whitespace-nowrap transition-colors hover:bg-ink/5 hover:text-ink"
-                    activeProps={{ className: "bg-ink/8 text-ink" }}
+                    className="relative inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 whitespace-nowrap transition-colors hover:bg-ink/5 hover:text-ink"
+                    activeProps={{ className: "bg-ink text-background hover:bg-ink hover:text-background" }}
                     activeOptions={{ exact: item.to === "/" }}
                   >
                     {item.label}
+                    {item.to === "/letters" && unread > 0 ? (
+                      <span className="grid size-4 place-items-center rounded-full bg-coral font-mono text-[9px] text-coral-foreground">
+                        {unread}
+                      </span>
+                    ) : null}
                   </Link>
                 </li>
               ))}
@@ -63,20 +74,20 @@ export function MistShell({ children }: { children: ReactNode }) {
             {profile ? (
               <Link
                 to="/threads"
-                className="flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1.5 text-sm font-semibold transition-transform hover:-translate-y-0.5"
+                className="flex shrink-0 items-center gap-2 rounded-full border border-line bg-card px-2.5 py-1.5 text-sm font-semibold transition-transform hover:-translate-y-0.5 sm:px-3"
               >
-                <span className="grid size-7 place-items-center rounded-full bg-teal font-mono text-[10px] text-teal-foreground">
+                <span className="grid size-7 place-items-center rounded-full bg-gradient-to-br from-teal to-lilac font-mono text-[10px] text-teal-foreground">
                   {profile.alias
                     .split(" ")
                     .map((w) => w[0])
                     .join("")}
                 </span>
-                {profile.alias}
+                <span className="hidden sm:inline">{profile.alias}</span>
               </Link>
             ) : (
               <Link
                 to="/join"
-                className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-background transition-transform hover:-translate-y-0.5"
+                className="shrink-0 rounded-full bg-ink px-4 py-2.5 text-sm font-semibold whitespace-nowrap text-background transition-transform hover:-translate-y-0.5 sm:px-5"
               >
                 Join the pool
               </Link>
@@ -86,9 +97,9 @@ export function MistShell({ children }: { children: ReactNode }) {
 
         <main id="main">{children}</main>
 
-        <footer className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-line py-8 sm:flex-row">
+        <footer className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-line py-8 text-center sm:flex-row sm:text-left">
           <p className="font-mono text-[11px] tracking-widest text-muted-foreground uppercase">
-            Mist — verified students only · UAE
+            Mist — verified students only · 10 UAE campuses
           </p>
           <p className="text-sm text-muted-foreground">Anonymity first. Reveal at your own pace.</p>
         </footer>
