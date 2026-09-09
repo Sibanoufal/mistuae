@@ -234,7 +234,19 @@ export type BoardPost = {
   responses: number;
   joined: boolean;
   mine?: boolean;
+  emoji?: string;
+  spots?: number;
+  hostNote?: string;
+  plan?: string[];
+  interestedFrom?: University[];
 };
+
+export const BOARD_CTA: Record<BoardKind, { idle: string; joined: string; verb: string }> = {
+  coffee: { idle: "Save me a seat", joined: "Seat saved — tap to give it up", verb: "sitting down" },
+  event: { idle: "Be my plus one", joined: "You're the plus one — tap to bail", verb: "going" },
+  project: { idle: "Join the crew", joined: "You're on the crew — tap to step off", verb: "building" },
+};
+
 
 type State = {
   profile: Profile | null;
