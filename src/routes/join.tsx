@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { MistShell } from "@/components/MistShell";
+import { Postmark, WaxSeal } from "@/components/Postal";
 import {
   CAMPUS_PREF_LABEL,
   INTERESTS,
@@ -43,6 +44,7 @@ function Join() {
     profile?.campusPref ?? (profile?.crossCampusOnly ? "cross" : "any"),
   );
   const [alias, setAlias] = useState("");
+  const [sealed, setSealed] = useState(false);
 
   useEffect(() => {
     setAlias((current) => current || profile?.alias || randomAlias());
@@ -98,7 +100,38 @@ function Join() {
       crossCampusOnly: campusPref === "cross",
       campusPref,
     });
-    navigate({ to: "/letters" });
+    setSealed(true);
+    window.setTimeout(() => navigate({ to: "/letters" }), 1900);
+  }
+
+  if (sealed) {
+    return (
+      <MistShell>
+        <div className="paper animate-pop relative mx-auto my-16 max-w-lg overflow-hidden rounded-[32px] p-8 text-center sm:p-12">
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-24 [clip-path:polygon(0_0,100%_0,50%_100%)] bg-ink/5"
+          />
+          <Postmark
+            place={university.split(" ")[0]!.toUpperCase()}
+            date={new Date()
+              .toLocaleDateString("en-GB", { day: "2-digit", month: "short" })
+              .toUpperCase()}
+            className="absolute top-5 right-5"
+          />
+          <WaxSeal tone="coral" size="lg" animate className="mx-auto mt-10" />
+          <p className="mt-5 font-mono text-[11px] tracking-widest text-coral uppercase">
+            Sealed · verified · stamped
+          </p>
+          <h1 className="mt-2 font-serif text-4xl leading-tight">
+            Welcome to the post office, {alias}.
+          </h1>
+          <p className="mt-3 text-sm text-muted-foreground" role="status">
+            Your ID never leaves this device. Sorting your first letter…
+          </p>
+        </div>
+      </MistShell>
+    );
   }
 
   return (
