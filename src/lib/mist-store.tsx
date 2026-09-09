@@ -256,7 +256,7 @@ type State = {
   letters: Letter[];
 };
 
-const STORAGE_KEY = "mist.state.v2";
+const STORAGE_KEY = "mist.state.v3";
 
 const EMPTY_STATE = (): State => ({
   profile: null,
@@ -653,6 +653,7 @@ type Ctx = {
   sendLetter: (subject: string, body: string, seal: SealColor) => void;
   markLetterRead: (id: string) => void;
   proposeGreatReveal: () => void;
+  skipADay: () => void;
 };
 
 const MistContext = createContext<Ctx | null>(null);
@@ -765,6 +766,15 @@ export function MistProvider({ children }: { children: ReactNode }) {
     setState((s) => ({
       ...s,
       letters: s.letters.map((l) => (l.id === id ? { ...l, read: true } : l)),
+    }));
+  }, []);
+
+  const skipADay = useCallback(() => {
+    setState((s) => ({
+      ...s,
+      letters: s.letters.map((l) =>
+        l.fromMe ? { ...l, sentAt: l.sentAt - LETTER_INTERVAL_MS, deliverAt: l.deliverAt - LETTER_INTERVAL_MS } : l,
+      ),
     }));
   }, []);
 
@@ -1004,6 +1014,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
       sendLetter,
       markLetterRead,
       proposeGreatReveal,
+      skipADay,
     }),
     [
       ready,
@@ -1021,6 +1032,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
       sendLetter,
       markLetterRead,
       proposeGreatReveal,
+      skipADay,
     ],
   );
 
