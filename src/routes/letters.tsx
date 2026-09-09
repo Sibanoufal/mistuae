@@ -111,7 +111,6 @@ function Letters() {
     sendLetter,
     markLetterRead,
     proposeGreatReveal,
-    skipADay,
   } = useMist();
   const [openId, setOpenId] = useState<string | null>(null);
   const [subject, setSubject] = useState("");
@@ -274,27 +273,11 @@ function Letters() {
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h2 className="text-sm font-semibold">Draft today&apos;s letter</h2>
-                <div className="flex items-center gap-2">
-                  <p
-                    aria-live="polite"
-                    className={`rounded-full px-3 py-1 font-mono text-[10px] tracking-widest uppercase ${
-                      canSend ? "bg-teal/15 text-teal" : "bg-coral/15 text-coral"
-                    }`}
-                  >
-                    {canSend
-                      ? "Post open"
-                      : `Next letter in ${formatCountdown(nextAllowedAt - now)}`}
-                  </p>
-                  {!canSend ? (
-                    <button
-                      type="button"
-                      onClick={skipADay}
-                      className="rounded-full border border-dashed border-ink/40 px-3 py-1 font-mono text-[10px] tracking-widest uppercase transition-transform hover:-translate-y-0.5"
-                    >
-                      Demo: skip a day
-                    </button>
-                  ) : null}
-                </div>
+                <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+                  {canSend
+                    ? "Post open"
+                    : `Next letter in ${formatCountdown(nextAllowedAt - now)}`}
+                </p>
               </div>
               <label htmlFor="subject" className="sr-only">
                 Subject

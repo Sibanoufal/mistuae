@@ -17,7 +17,6 @@ import { Route as MatchRouteImport } from './routes/match'
 import { Route as ProblemSolutionRouteImport } from './routes/problem-solution'
 import { Route as ThreadsRouteImport } from './routes/threads'
 import { Route as ChatThreadIdRouteImport } from './routes/chat.$threadId'
-import { Route as InvitePostIdRouteImport } from './routes/invite.$postId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -59,11 +58,6 @@ const ChatThreadIdRoute = ChatThreadIdRouteImport.update({
   path: '/chat/$threadId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InvitePostIdRoute = InvitePostIdRouteImport.update({
-  id: '/invite/$postId',
-  path: '/invite/$postId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -74,7 +68,6 @@ export interface FileRoutesByFullPath {
   '/problem-solution': typeof ProblemSolutionRoute
   '/threads': typeof ThreadsRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
-  '/invite/$postId': typeof InvitePostIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -85,7 +78,6 @@ export interface FileRoutesByTo {
   '/problem-solution': typeof ProblemSolutionRoute
   '/threads': typeof ThreadsRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
-  '/invite/$postId': typeof InvitePostIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -97,7 +89,6 @@ export interface FileRoutesById {
   '/problem-solution': typeof ProblemSolutionRoute
   '/threads': typeof ThreadsRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
-  '/invite/$postId': typeof InvitePostIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -110,7 +101,6 @@ export interface FileRouteTypes {
     | '/problem-solution'
     | '/threads'
     | '/chat/$threadId'
-    | '/invite/$postId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -121,7 +111,6 @@ export interface FileRouteTypes {
     | '/problem-solution'
     | '/threads'
     | '/chat/$threadId'
-    | '/invite/$postId'
   id:
     | '__root__'
     | '/'
@@ -132,7 +121,6 @@ export interface FileRouteTypes {
     | '/problem-solution'
     | '/threads'
     | '/chat/$threadId'
-    | '/invite/$postId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -144,7 +132,6 @@ export interface RootRouteChildren {
   ProblemSolutionRoute: typeof ProblemSolutionRoute
   ThreadsRoute: typeof ThreadsRoute
   ChatThreadIdRoute: typeof ChatThreadIdRoute
-  InvitePostIdRoute: typeof InvitePostIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -205,13 +192,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChatThreadIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/invite/$postId': {
-      id: '/invite/$postId'
-      path: '/invite/$postId'
-      fullPath: '/invite/$postId'
-      preLoaderRoute: typeof InvitePostIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -224,7 +204,6 @@ const rootRouteChildren: RootRouteChildren = {
   ProblemSolutionRoute: ProblemSolutionRoute,
   ThreadsRoute: ThreadsRoute,
   ChatThreadIdRoute: ChatThreadIdRoute,
-  InvitePostIdRoute: InvitePostIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -160,47 +160,6 @@ export type Thread = {
 
 export type BoardKind = "coffee" | "event" | "project";
 
-export const BOARD_META: Record<
-  BoardKind,
-  {
-    label: string;
-    icon: string;
-    chip: string;
-    cta: string;
-    joinedCta: string;
-    unit: string;
-    blurb: string;
-  }
-> = {
-  coffee: {
-    label: "Coffee chat",
-    icon: "☕",
-    chip: "bg-butter text-butter-foreground",
-    cta: "Grab the other chair",
-    joinedCta: "Chair saved — tap to give it up",
-    unit: "want the other chair",
-    blurb: "Ten to thirty minutes, one drink, zero obligation to become friends.",
-  },
-  event: {
-    label: "Event partner",
-    icon: "✦",
-    chip: "bg-mint text-ink",
-    cta: "Be their plus one",
-    joinedCta: "You're their plus one — tap to back out",
-    unit: "offered to tag along",
-    blurb: "Someone already bought the ticket. They just don't want to walk in alone.",
-  },
-  project: {
-    label: "Project collab",
-    icon: "◎",
-    chip: "bg-lilac/30 text-plum",
-    cta: "Pitch yourself to the crew",
-    joinedCta: "You're on the crew — tap to leave",
-    unit: "pitched for a spot",
-    blurb: "Real deliverables, real deadlines, still fully masked until you agree to meet.",
-  },
-};
-
 export type BoardPost = {
   id: string;
   kind: BoardKind;
@@ -212,32 +171,7 @@ export type BoardPost = {
   responses: number;
   joined: boolean;
   mine?: boolean;
-  vibe?: string;
-  spots?: number;
-  hostYear?: string;
 };
-
-/** Masked students in the live pool — used by the swipe deck and campus filter. */
-export const CANDIDATES: {
-  alias: string;
-  university: University;
-  interest: string;
-  line: string;
-  year: string;
-}[] = [
-  { alias: "Auburn Otter", university: "RIT Dubai", interest: "Coding", line: "I debug better at 2am and I know that's a red flag.", year: "Year 3" },
-  { alias: "Velvet Heron", university: "American University of Sharjah", interest: "Design", line: "I will judge your kerning gently and in private.", year: "Year 2" },
-  { alias: "Cobalt Koi", university: "BITS Pilani Dubai", interest: "Startups", line: "Pitched a laundry app to my mother. She invested nothing.", year: "Year 4" },
-  { alias: "Saffron Moth", university: "Middlesex University Dubai", interest: "Film", line: "Letterboxd is my personality. Please save me from it.", year: "Year 1" },
-  { alias: "Marine Falcon", university: "Heriot-Watt University Dubai", interest: "Music", line: "I make beats nobody has heard, which keeps them perfect.", year: "Year 2" },
-  { alias: "Ivory Lynx", university: "University of Wollongong in Dubai", interest: "Reading", line: "Currently 40 pages into 6 different books.", year: "Postgraduate" },
-  { alias: "Amber Wren", university: "Manipal Academy of Higher Education Dubai", interest: "Food", line: "I have ranked every karak within 3km of campus.", year: "Year 3" },
-  { alias: "Indigo Orca", university: "Murdoch University Dubai", interest: "Photography", line: "Golden hour in Al Quoz beats any filter, fight me.", year: "Year 2" },
-  { alias: "Olive Ibis", university: "University of Sharjah", interest: "Volunteering", line: "Beach cleanups are my whole weekend and I'm not sorry.", year: "Year 1" },
-  { alias: "Coral Fox", university: "Amity University Dubai", interest: "Debate", line: "I lost a debate once. In 2019. Still thinking about it.", year: "Year 4" },
-  { alias: "Velvet Koi", university: "RIT Dubai", interest: "Gaming", line: "Ranked queue at 3am, lecture at 8am. Balance.", year: "Year 1" },
-  { alias: "Cobalt Wren", university: "American University of Sharjah", interest: "Sports", line: "I run so I can eat. It's a closed loop.", year: "Year 3" },
-];
 
 type State = {
   profile: Profile | null;
@@ -296,140 +230,99 @@ const SEED_POSTS: BoardPost[] = [
   {
     id: "p1",
     kind: "coffee",
-    title: "Explain thermodynamics to me over karak, I'll pay in pastry",
-    body: "UOWD, second year, currently failing gracefully. Knowledge Village Costa, the one with the broken AC. Bring your trauma, I have the coffee.",
+    title: "Someone to explain thermodynamics over karak",
+    body: "2nd year engineering. Meeting near the food court, bring your trauma — I have the coffee.",
     university: "University of Wollongong in Dubai",
     when: "Thu 4:00 PM · Knowledge Village",
     alias: "Marine Koi",
-    hostYear: "Year 2",
-    vibe: "Study-adjacent",
-    spots: 1,
     responses: 12,
     joined: false,
   },
   {
     id: "p2",
     kind: "event",
-    title: "One spare ticket to the d3 film fest, must ask weird questions",
-    body: "Heriot-Watt. I already bought two tickets in a moment of optimism. Friday 7pm, Dubai Design District. You do not have to like the film, only the walk after.",
+    title: "Need one more for the film fest panel",
+    body: "Friday 7pm at the Dubai Design District. Looking for a wingman who asks weird questions.",
     university: "Heriot-Watt University Dubai",
     when: "Fri 7:00 PM · d3",
     alias: "Ivory Wren",
-    hostYear: "Year 3",
-    vibe: "Loud, then quiet",
-    spots: 1,
-    responses: 23,
+    responses: 8,
     joined: false,
   },
   {
     id: "p3",
     kind: "project",
-    title: "Three-person hackathon crew, no egos, snacks provided",
-    body: "RIT Dubai, Silicon Oasis. Building an orientation-week tool that doesn't suck. Need a designer and someone who actually ships instead of refactoring forever.",
+    title: "Crew of 3 for the campus hackathon, no egos",
+    body: "Building something for orientation week. Want a designer + someone who actually ships.",
     university: "RIT Dubai",
     when: "Registration closes Sun",
     alias: "Cobalt Lynx",
-    hostYear: "Year 3",
-    vibe: "Deadline energy",
-    spots: 2,
-    responses: 15,
+    responses: 5,
     joined: false,
   },
   {
     id: "p4",
     kind: "coffee",
-    title: "Transferred from Sharjah in week 6, know precisely zero people",
-    body: "AUS. Twenty-minute walk-and-talk between lectures, no life story required. I'll ask you three questions, you ask me three, we both leave less invisible.",
+    title: "First-semester transfer, know nobody",
+    body: "Moved from Sharjah campus. Anyone free for a 20 minute walk-and-talk between lectures?",
     university: "American University of Sharjah",
     when: "Any weekday, 1–3 PM",
     alias: "Saffron Moth",
-    hostYear: "Year 2",
-    vibe: "Low pressure",
-    spots: 1,
-    responses: 31,
+    responses: 17,
     joined: false,
   },
   {
     id: "p5",
     kind: "project",
-    title: "Sharjah↔Dubai carpool app: I do backend, you do the part I hate",
-    body: "MDX. The commute is 55 minutes and everyone drives alone, which is deranged. Need a product/design brain who can talk to humans on camera.",
+    title: "Looking for a co-founder-ish person for a tiny app",
+    body: "Idea: campus carpool between Sharjah and Dubai. I do backend, need product/design brain.",
     university: "Middlesex University Dubai",
     when: "Starting next week",
     alias: "Amber Falcon",
-    hostYear: "Year 4",
-    vibe: "Slightly serious",
-    spots: 2,
-    responses: 18,
+    responses: 9,
     joined: false,
   },
   {
     id: "p6",
     kind: "event",
-    title: "Inter-uni sports day: two tickets, one very quiet friend group",
-    body: "RIT Dubai, Academic City, 9am and yes that is early. Would genuinely rather show up with a stranger than alone again. We can leave after the relay.",
+    title: "Two tickets, one very quiet friend group",
+    body: "Inter-uni sports day. Would rather show up with a stranger than alone, honestly.",
     university: "RIT Dubai",
     when: "Sat 9:00 AM · Academic City",
     alias: "Olive Orca",
-    hostYear: "Year 1",
-    vibe: "Sunny, sweaty",
-    spots: 1,
-    responses: 9,
+    responses: 6,
     joined: false,
   },
   {
     id: "p7",
     kind: "coffee",
-    title: "BITS to Manipal is a 12 minute walk. We have never spoken.",
-    body: "Same road, same food street, two entirely separate universes. Chai at Academic City, Tuesday, and we compare how badly our campuses do orientation.",
+    title: "BITS to Manipal is a 12 minute walk. Anyone?",
+    body: "Same road, never met anyone from next door. Chai at the Academic City food street?",
     university: "BITS Pilani Dubai",
     when: "Tue 3:30 PM · Academic City",
     alias: "Indigo Heron",
-    hostYear: "Year 2",
-    vibe: "Neighbourly",
-    spots: 3,
-    responses: 27,
+    responses: 11,
     joined: false,
   },
   {
     id: "p8",
     kind: "project",
-    title: "Murdoch media student needs a UOS science brain, on camera",
-    body: "Short doc about Sharjah's disappearing night sky. You explain light pollution convincingly, I make you look cinematic. Three weekends, real credit in the titles.",
+    title: "Murdoch media student needs a UOS science brain",
+    body: "Making a short doc on Sharjah's night sky. Need someone who can explain light pollution on camera.",
     university: "Murdoch University Dubai",
     when: "Shooting over 3 weekends",
     alias: "Velvet Ibis",
-    hostYear: "Postgraduate",
-    vibe: "Nerdy, nocturnal",
-    spots: 1,
-    responses: 7,
+    responses: 4,
     joined: false,
   },
   {
     id: "p9",
     kind: "event",
-    title: "Amity cultural night — need a plus one who also dances badly",
-    body: "So I'm statistically not the worst one there. DIAC, Wednesday 6:30. Open to any campus, the Sharjah bus drops you basically at the door.",
+    title: "Amity cultural night — need a plus one who dances badly",
+    body: "So I'm not the only one. Open to any campus, the bus from Sharjah is easy.",
     university: "Amity University Dubai",
     when: "Wed 6:30 PM · DIAC",
     alias: "Saffron Fox",
-    hostYear: "Year 2",
-    vibe: "Chaotic good",
-    spots: 2,
-    responses: 41,
-    joined: false,
-  },
-  {
-    id: "p10",
-    kind: "coffee",
-    title: "UOS postgrad, five people in my programme, all married",
-    body: "University of Sharjah. I would like one (1) conversation that is not about my thesis. I know a cafe near the library where nobody from my department goes.",
-    university: "University of Sharjah",
-    when: "Sun or Mon, after 5 PM",
-    alias: "Amber Lynx",
-    hostYear: "Postgraduate",
-    vibe: "Quietly desperate",
-    spots: 1,
     responses: 14,
     joined: false,
   },
@@ -511,7 +404,6 @@ type Ctx = {
     mode: ChatMode;
     duration: ChatDuration;
     sharedInterest: string;
-    partner?: { alias: string; university: University };
   }) => Thread;
   sendMessage: (threadId: string, text: string) => void;
   offerReveal: (threadId: string) => void;
@@ -523,8 +415,6 @@ type Ctx = {
   sendLetter: (subject: string, body: string, seal: SealColor) => void;
   markLetterRead: (id: string) => void;
   proposeGreatReveal: () => void;
-  /** Demo control: rewinds the cooldown clock by a day so judges can post again. */
-  skipADay: () => void;
 };
 
 const MistContext = createContext<Ctx | null>(null);
@@ -640,15 +530,6 @@ export function MistProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
-  const skipADay = useCallback(() => {
-    setState((s) => ({
-      ...s,
-      letters: s.letters.map((l) =>
-        l.fromMe ? { ...l, sentAt: l.sentAt - LETTER_INTERVAL_MS, deliverAt: l.deliverAt - LETTER_INTERVAL_MS } : l,
-      ),
-    }));
-  }, []);
-
   const proposeGreatReveal = useCallback(() => {
     setState((s) =>
       s.penPal ? { ...s, penPal: { ...s.penPal, greatReveal: { ...s.penPal.greatReveal, mine: true } } } : s,
@@ -669,7 +550,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const createThread = useCallback<Ctx["createThread"]>(
-    ({ mode, duration, sharedInterest, partner }) => {
+    ({ mode, duration, sharedInterest }) => {
       const me: Member = {
         alias: state.profile?.alias ?? randomAlias(),
         university: state.profile?.university ?? UNIVERSITIES[0],
@@ -680,9 +561,8 @@ export function MistProvider({ children }: { children: ReactNode }) {
       const otherCount = mode === "pair" ? 1 : 2 + Math.floor(Math.random() * 2);
       const pool = campusPool(state.profile);
       const others: Member[] = Array.from({ length: otherCount }, (_, i) => ({
-        alias: i === 0 && partner ? partner.alias : randomAlias(),
-        university:
-          i === 0 && partner ? partner.university : pool[Math.floor(Math.random() * pool.length)]!,
+        alias: randomAlias(),
+        university: pool[Math.floor(Math.random() * pool.length)]!,
         revealedName: FAKE_NAMES[(i + Math.floor(Math.random() * 4)) % FAKE_NAMES.length]!,
         revealed: false,
       }));
@@ -886,7 +766,6 @@ export function MistProvider({ children }: { children: ReactNode }) {
       sendLetter,
       markLetterRead,
       proposeGreatReveal,
-      skipADay,
     }),
     [
       ready,
@@ -904,7 +783,6 @@ export function MistProvider({ children }: { children: ReactNode }) {
       sendLetter,
       markLetterRead,
       proposeGreatReveal,
-      skipADay,
     ],
   );
 

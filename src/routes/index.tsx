@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
 import { MistShell } from "@/components/MistShell";
 import {
   GREAT_REVEAL_EVENT,
@@ -95,143 +94,9 @@ function EnvelopeStack() {
   );
 }
 
-type OrbitNode = {
-  id: string;
-  label: string;
-  sub: string;
-  ring: number;
-  angle: number;
-  tint: string;
-};
-
-function Orbit({ nodes }: { nodes: OrbitNode[] }) {
-  const size = 300;
-  const c = size / 2;
-  const radii = [58, 96, 132];
-  return (
-    <svg
-      viewBox={`0 0 ${size} ${size}`}
-      className="mx-auto h-[300px] w-full max-w-[320px]"
-      role="img"
-      aria-label={`Your connection orbit: ${nodes.length} active connections`}
-    >
-      {radii.map((r) => (
-        <circle
-          key={r}
-          cx={c}
-          cy={c}
-          r={r}
-          fill="none"
-          stroke="currentColor"
-          strokeDasharray="3 6"
-          className="text-background/25"
-        />
-      ))}
-      {nodes.map((n) => {
-        const r = radii[n.ring] ?? 132;
-        const x = c + r * Math.cos(n.angle);
-        const y = c + r * Math.sin(n.angle);
-        return (
-          <g key={n.id}>
-            <line x1={c} y1={c} x2={x} y2={y} stroke="currentColor" className="text-background/20" />
-            <circle cx={x} cy={y} r={12} className={n.tint} />
-            <text
-              x={x}
-              y={y + 26}
-              textAnchor="middle"
-              className="fill-current text-[8px] text-background/80"
-              style={{ fontFamily: "var(--font-mono)" }}
-            >
-              {n.label}
-            </text>
-          </g>
-        );
-      })}
-      <circle cx={c} cy={c} r={22} className="fill-butter" />
-      <text
-        x={c}
-        y={c + 4}
-        textAnchor="middle"
-        className="fill-ink text-[10px] font-bold"
-        style={{ fontFamily: "var(--font-mono)" }}
-      >
-        YOU
-      </text>
-    </svg>
-  );
-}
-
 function Index() {
-  const { profile, penPal, letters, threads, posts } = useMist();
+  const { profile, penPal, letters, threads } = useMist();
   const unread = letters.filter((l) => !l.fromMe && !l.read).length;
-  const joined = posts.filter((p) => p.joined);
-
-  const nodes = useMemo<OrbitNode[]>(() => {
-    const list: OrbitNode[] = [];
-    if (penPal) {
-      list.push({
-        id: "penpal",
-        label: penPal.alias.split(" ")[0]!,
-        sub: "Pen pal",
-        ring: 0,
-        angle: -Math.PI / 2,
-        tint: "fill-coral",
-      });
-    }
-    threads
-      .filter((t) => !t.closed)
-      .slice(0, 5)
-      .forEach((t, i, arr) => {
-        list.push({
-          id: t.id,
-          label: (t.members.find((m) => !m.isMe)?.alias ?? "?").split(" ")[0]!,
-          sub: "Masked chat",
-          ring: 1,
-          angle: (i / Math.max(1, arr.length)) * Math.PI * 2 + 0.4,
-          tint: "fill-teal",
-        });
-      });
-    joined.slice(0, 6).forEach((p, i, arr) => {
-      list.push({
-        id: p.id,
-        label: UNIVERSITY_SHORT[p.university],
-        sub: "Invite",
-        ring: 2,
-        angle: (i / Math.max(1, arr.length)) * Math.PI * 2 + 1.1,
-        tint: "fill-lilac",
-      });
-    });
-    return list;
-  }, [penPal, threads, joined]);
-
-  const timeline = useMemo(() => {
-    const items: { id: string; at: number; text: string; seal: string }[] = [];
-    letters.slice(0, 6).forEach((l) =>
-      items.push({
-        id: `l-${l.id}`,
-        at: l.sentAt,
-        text: l.fromMe ? `You posted “${l.subject}”` : `Letter arrived: “${l.subject}”`,
-        seal: l.fromMe ? "bg-coral" : "bg-lilac",
-      }),
-    );
-    threads.slice(0, 4).forEach((t) =>
-      items.push({
-        id: `t-${t.id}`,
-        at: t.createdAt,
-        text: `Masked thread opened with ${t.members.find((m) => !m.isMe)?.alias ?? "a stranger"}`,
-        seal: "bg-teal",
-      }),
-    );
-    joined.slice(0, 4).forEach((p) =>
-      items.push({
-        id: `p-${p.id}`,
-        at: Date.now() - 1000,
-        text: `You joined “${p.title}”`,
-        seal: "bg-butter",
-      }),
-    );
-    return items.sort((a, b) => b.at - a.at).slice(0, 6);
-  }, [letters, threads, joined]);
 
   return (
     <MistShell>
@@ -242,15 +107,16 @@ function Index() {
             <span className="size-1.5 animate-pulse rounded-full bg-coral" />
             Verified students · 10 UAE campuses
           </span>
-          <h1 className="mt-5 animate-rise text-[2.75rem] leading-[0.9] font-extrabold tracking-tight text-balance sm:text-6xl xl:text-7xl">
-            Ten campuses.
+          <h1 className="mt-5 animate-rise text-[2.75rem] leading-[0.92] font-extrabold tracking-tight text-balance sm:text-6xl xl:text-7xl">
+            Secret pen pals,
             <br />
-            <span className="font-serif font-normal italic">One masked stranger.</span>
+            <span className="font-serif font-normal italic">slow on purpose,</span>
             <br />
-            <span className="text-gradient">One letter a day.</span>
+            <span className="text-gradient">across every campus.</span>
           </h1>
-          <p className="mt-5 max-w-[44ch] animate-rise text-base text-pretty text-muted-foreground sm:text-lg">
-            No feed. No photos. No names — until you both decide otherwise.
+          <p className="mt-5 max-w-[46ch] animate-rise text-base text-pretty text-muted-foreground sm:text-lg">
+            Mist pairs you anonymously with a student from any of ten UAE universities. Write one
+            letter a day, or open a masked chat for minutes. Reveal only when you both want to.
           </p>
           <div className="mt-7 flex animate-rise flex-wrap items-center gap-3">
             <Link
@@ -263,7 +129,7 @@ function Index() {
               to="/match"
               className="rounded-full border border-line bg-card px-6 py-3 font-semibold transition-transform hover:-translate-y-0.5"
             >
-              Swipe the masked pool
+              Quick masked chat
             </Link>
           </div>
           <div className="mt-6 flex animate-rise flex-wrap gap-2">
@@ -283,118 +149,36 @@ function Index() {
         </div>
       </section>
 
-      {/* Great Reveal teaser — surfaced early */}
-      <Link
-        to={profile ? "/letters" : "/join"}
-        className="group relative flex flex-wrap items-center gap-4 overflow-hidden rounded-[28px] border-2 border-dashed border-coral/50 bg-gradient-to-r from-butter/70 via-paper to-lilac/30 p-5 transition-transform hover:-translate-y-1 sm:gap-6 sm:p-6"
-      >
-        <span className="animate-seal grid size-14 shrink-0 place-items-center rounded-full bg-coral font-mono text-xs text-coral-foreground sticker">
-          10
-          <br />
-          DEC
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="font-mono text-[10px] tracking-widest text-coral uppercase">
-            Save the date · optional, mutual
-          </p>
-          <h2 className="mt-1 font-serif text-2xl leading-tight sm:text-3xl">
-            The Great Reveal — one evening, every mask comes off.
-          </h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {GREAT_REVEAL_EVENT.date} · {GREAT_REVEAL_EVENT.venue}
-          </p>
-        </div>
-        <span className="font-mono text-[11px] tracking-widest text-plum uppercase group-hover:underline">
-          How it works →
-        </span>
-      </Link>
-
-      {/* Dashboard for verified students */}
+      {/* Dashboard strip for verified students */}
       {profile ? (
         <section
           aria-label="Your Mist today"
-          className="mt-6 grid gap-5 rounded-[28px] bg-ink p-5 text-background lg:grid-cols-12"
+          className="grid gap-3 rounded-[28px] bg-ink p-4 text-background sm:grid-cols-3 sm:p-5"
         >
-          <div className="grid gap-3 lg:col-span-7 sm:grid-cols-3">
-            <Link to="/letters" className="rounded-2xl bg-background/10 p-4 transition-colors hover:bg-background/15">
-              <p className="font-mono text-[10px] tracking-widest text-butter uppercase">Letters</p>
-              <p className="mt-1 text-2xl font-extrabold">
-                {unread} <span className="text-base font-medium text-background/70">unread</span>
-              </p>
-              <p className="text-xs text-background/60">
-                {penPal ? `from ${penPal.alias} · ${UNIVERSITY_SHORT[penPal.university]}` : "Pen pal being assigned"}
-              </p>
-            </Link>
-            <Link to="/threads" className="rounded-2xl bg-background/10 p-4 transition-colors hover:bg-background/15">
-              <p className="font-mono text-[10px] tracking-widest text-mint uppercase">Masked chats</p>
-              <p className="mt-1 text-2xl font-extrabold">
-                {threads.filter((t) => !t.closed).length}{" "}
-                <span className="text-base font-medium text-background/70">open</span>
-              </p>
-              <p className="text-xs text-background/60">You are {profile.alias}</p>
-            </Link>
-            <Link to="/boards" className="rounded-2xl bg-background/10 p-4 transition-colors hover:bg-background/15">
-              <p className="font-mono text-[10px] tracking-widest text-coral uppercase">Invites</p>
-              <p className="mt-1 text-2xl font-extrabold">
-                {joined.length} <span className="text-base font-medium text-background/70">joined</span>
-              </p>
-              <p className="text-xs text-background/60">Coffee, events, projects</p>
-            </Link>
-
-            {/* Wax-seal activity timeline */}
-            <div className="rounded-2xl bg-background/10 p-4 sm:col-span-3">
-              <p className="font-mono text-[10px] tracking-widest text-butter uppercase">
-                Sealed activity
-              </p>
-              <ol className="mt-3 space-y-2.5">
-                {timeline.length ? (
-                  timeline.map((t) => (
-                    <li key={t.id} className="flex items-start gap-3">
-                      <span
-                        aria-hidden="true"
-                        className={`mt-0.5 grid size-5 shrink-0 place-items-center rounded-full font-mono text-[7px] text-ink ${t.seal}`}
-                      >
-                        M
-                      </span>
-                      <span className="min-w-0 flex-1 truncate text-sm text-background/80">
-                        {t.text}
-                      </span>
-                      <span className="shrink-0 font-mono text-[10px] text-background/50">
-                        {new Date(t.at).toLocaleDateString("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                        })}
-                      </span>
-                    </li>
-                  ))
-                ) : (
-                  <li className="text-sm text-background/60">
-                    Nothing sealed yet — post your first letter.
-                  </li>
-                )}
-              </ol>
-            </div>
-          </div>
-
-          <div className="lg:col-span-5">
-            <div className="rounded-2xl bg-background/10 p-4">
-              <p className="font-mono text-[10px] tracking-widest text-mint uppercase">
-                Your orbit · computed live
-              </p>
-              <Orbit nodes={nodes} />
-              <div className="mt-2 flex flex-wrap justify-center gap-3 font-mono text-[10px] text-background/70 uppercase">
-                <span className="flex items-center gap-1.5">
-                  <span className="size-2 rounded-full bg-coral" /> pen pal
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="size-2 rounded-full bg-teal" /> chats
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="size-2 rounded-full bg-lilac" /> invites
-                </span>
-              </div>
-            </div>
-          </div>
+          <Link to="/letters" className="rounded-2xl bg-background/10 p-4 transition-colors hover:bg-background/15">
+            <p className="font-mono text-[10px] tracking-widest text-butter uppercase">Letters</p>
+            <p className="mt-1 text-2xl font-extrabold">
+              {unread} <span className="text-base font-medium text-background/70">unread</span>
+            </p>
+            <p className="text-xs text-background/60">
+              {penPal ? `from ${penPal.alias} · ${UNIVERSITY_SHORT[penPal.university]}` : "Pen pal being assigned"}
+            </p>
+          </Link>
+          <Link to="/threads" className="rounded-2xl bg-background/10 p-4 transition-colors hover:bg-background/15">
+            <p className="font-mono text-[10px] tracking-widest text-mint uppercase">Masked chats</p>
+            <p className="mt-1 text-2xl font-extrabold">
+              {threads.filter((t) => !t.closed).length}{" "}
+              <span className="text-base font-medium text-background/70">open</span>
+            </p>
+            <p className="text-xs text-background/60">You are {profile.alias}</p>
+          </Link>
+          <Link to="/letters" className="rounded-2xl bg-background/10 p-4 transition-colors hover:bg-background/15">
+            <p className="font-mono text-[10px] tracking-widest text-coral uppercase">Great Reveal</p>
+            <p className="mt-1 text-2xl font-extrabold">
+              {penPal?.greatReveal.agreedAt ? "Agreed ✓" : "10 Dec"}
+            </p>
+            <p className="text-xs text-background/60">{GREAT_REVEAL_EVENT.venue}</p>
+          </Link>
         </section>
       ) : null}
 
@@ -445,7 +229,7 @@ function Index() {
               Minutes, a day, or forever.
             </h3>
             <p className="mt-2 text-sm opacity-85">
-              Drag through the deck. A timer you both control.
+              1:1 or a crew of four. A timer you both control.
             </p>
             <p className="mt-5 font-mono text-4xl font-medium tabular-nums">03:12</p>
           </Link>
@@ -456,7 +240,7 @@ function Index() {
           >
             <div className="text-2xl">☕</div>
             <h3 className="mt-3 text-xl font-extrabold">Coffee chats</h3>
-            <p className="mt-1 text-sm opacity-80">Karak, ten minutes, no life story required.</p>
+            <p className="mt-1 text-sm opacity-80">Ten-minute invites, any campus.</p>
           </Link>
           <Link
             to="/boards"
@@ -464,7 +248,7 @@ function Index() {
           >
             <div className="text-2xl">✦</div>
             <h3 className="mt-3 text-xl font-extrabold">Event partners</h3>
-            <p className="mt-1 text-sm text-muted-foreground">Somebody has a spare ticket tonight.</p>
+            <p className="mt-1 text-sm text-muted-foreground">Never show up alone again.</p>
           </Link>
           <Link
             to="/boards"
@@ -485,7 +269,10 @@ function Index() {
         </h2>
         <ol className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s, i) => (
-            <li key={s.n} className={`rounded-3xl p-5 ${s.tint} ${i % 2 ? "sm:translate-y-3" : ""}`}>
+            <li
+              key={s.n}
+              className={`rounded-3xl p-5 ${s.tint} ${i % 2 ? "sm:translate-y-3" : ""}`}
+            >
               <span className="inline-block rounded-full bg-background px-2 py-0.5 font-mono text-xs tracking-widest">
                 {s.n}
               </span>
