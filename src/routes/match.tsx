@@ -181,12 +181,16 @@ function Match() {
     const partner = current;
     setSearching(true);
     window.setTimeout(() => {
-      const t = createThread({
-        mode,
-        duration,
-        sharedInterest: partner?.interest ?? interest,
-        partner: partner ? { alias: partner.alias, university: partner.university } : undefined,
-      });
+      const t = createThread(
+        partner
+          ? {
+              mode,
+              duration,
+              sharedInterest: partner.interest,
+              partner: { alias: partner.alias, university: partner.university },
+            }
+          : { mode, duration, sharedInterest: interest },
+      );
       navigate({ to: "/chat/$threadId", params: { threadId: t.id } });
     }, 1200);
   }
