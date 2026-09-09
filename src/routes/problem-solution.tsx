@@ -216,27 +216,75 @@ function ProblemSolution() {
 
         <section className="mt-10" aria-labelledby="why">
           <h2 id="why" className="text-2xl font-bold tracking-tight">
-            4 · Why it matters
+            4 · Who this helps
           </h2>
-          <div className="glass mt-4 grid gap-5 rounded-[28px] p-6 sm:grid-cols-3">
-            <p className="text-pretty text-muted-foreground">
-              <strong className="text-ink">For the student.</strong> Loneliness at university is
-              linked to poorer academic performance, worse mental health and higher dropout intent. A
-              single low-risk conversation is often all it takes to break the first-week spiral.
-            </p>
-            <p className="text-pretty text-muted-foreground">
-              <strong className="text-ink">For the campus.</strong> Students who feel socially
-              connected participate in clubs, attend events and stay enrolled. Mist feeds people into
-              existing campus life instead of competing with it.
-            </p>
-            <p className="text-pretty text-muted-foreground">
-              <strong className="text-ink">For the country&apos;s student ecosystem.</strong> Five
-              universities sit minutes apart in the UAE and barely mix. Cross-campus anonymous pairing
-              quietly builds a single student community out of ten separate ones — and turns it into
-              coffee, events and real projects.
-            </p>
+          <div className="mt-4 grid gap-4 lg:grid-cols-3">
+            <div className="glass rounded-[28px] p-6">
+              <p className="font-mono text-[10px] tracking-widest text-coral uppercase">
+                The individual student
+              </p>
+              <h3 className="mt-1 text-xl font-bold">One conversation, almost no risk</h3>
+              <p className="mt-2 text-sm text-pretty text-muted-foreground">
+                Loneliness at university is linked to poorer academic performance, worse mental health
+                and higher dropout intent.<a href="#references" className="align-super font-mono text-[10px] text-coral">[1]</a>{" "}
+                A masked first message costs nothing socially, so transfers, first-year expatriates,
+                commuters and shy or neurodivergent students can start without performing.
+              </p>
+            </div>
+            <div className="glass rounded-[28px] p-6">
+              <p className="font-mono text-[10px] tracking-widest text-teal uppercase">
+                The individual campus
+              </p>
+              <h3 className="mt-1 text-xl font-bold">Feeds campus life, doesn&apos;t compete</h3>
+              <p className="mt-2 text-sm text-pretty text-muted-foreground">
+                Students who feel socially connected join clubs, attend events and stay enrolled. Every
+                Mist board post ends in a real place on a real campus — a cafeteria, an atrium, a
+                hackathon desk — so student affairs teams see attendance, not screen time.
+              </p>
+            </div>
+            <div className="glass rounded-[28px] p-6">
+              <p className="font-mono text-[10px] tracking-widest text-plum uppercase">
+                The wider UAE student ecosystem
+              </p>
+              <h3 className="mt-1 text-xl font-bold">Ten universities, one student body</h3>
+              <p className="mt-2 text-sm text-pretty text-muted-foreground">
+                Campuses sit minutes apart in Academic City, Knowledge Park and Sharjah and barely
+                mix.<a href="#references" className="align-super font-mono text-[10px] text-coral">[4]</a>{" "}
+                Cross-campus pairing quietly builds one national student community out of ten separate
+                ones, and turns it into coffee, events and real collaborations.
+              </p>
+            </div>
           </div>
         </section>
+
+        <section className="mt-10" aria-labelledby="references">
+          <h2 id="references" className="text-2xl font-bold tracking-tight">
+            5 · References &amp; method
+          </h2>
+          <ol className="glass mt-4 space-y-2 rounded-[28px] p-6 text-sm text-muted-foreground">
+            <li>
+              [1] Published higher-education wellbeing surveys reporting frequent loneliness among
+              roughly a third of undergraduates, and its association with attainment and dropout intent.
+            </li>
+            <li>
+              [2] UAE Ministry of Education and institutional enrolment profiles describing the
+              overwhelmingly international composition of UAE university student bodies.
+            </li>
+            <li>
+              [3] Dubai commuter-travel and campus-cluster travel time estimates for Academic City,
+              Knowledge Park and Sharjah.
+            </li>
+            <li>
+              [4] Site observation of the ten campuses served here, plus informal interviews with
+              students conducted during this challenge (paraphrased quotes above).
+            </li>
+            <li>
+              Method: desk research plus short unstructured interviews. Figures are indicative and
+              frame the design problem; they are not presented as formal statistical claims.
+            </li>
+          </ol>
+        </section>
+
 
         <div className="glass mt-10 flex flex-wrap items-center justify-between gap-4 rounded-[28px] p-6">
           <p className="text-lg font-bold">Try the thing this page describes.</p>
