@@ -43,6 +43,7 @@ function Join() {
     profile?.campusPref ?? (profile?.crossCampusOnly ? "cross" : "any"),
   );
   const [alias, setAlias] = useState("");
+  const [sealed, setSealed] = useState(false);
 
   useEffect(() => {
     setAlias((current) => current || profile?.alias || randomAlias());
