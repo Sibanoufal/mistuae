@@ -149,9 +149,18 @@ function ProblemSolution() {
             informal interviews with students across the ten campuses this platform serves.
           </p>
           <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {RESEARCH.map((r) => (
+            {RESEARCH.map((r, i) => (
               <div key={r.stat} className="glass rounded-3xl p-5">
-                <p className="text-3xl font-extrabold text-teal">{r.stat}</p>
+                <p className="text-3xl font-extrabold text-teal">
+                  {r.stat}
+                  <a
+                    href="#references"
+                    className="ml-1 align-super font-mono text-xs text-coral"
+                    aria-label={`See reference ${i + 1}`}
+                  >
+                    [{i + 1}]
+                  </a>
+                </p>
                 <p className="mt-1 font-semibold">{r.label}</p>
                 <p className="mt-2 text-xs text-muted-foreground">{r.source}</p>
               </div>
