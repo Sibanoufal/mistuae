@@ -16,6 +16,7 @@ import { Route as LettersRouteImport } from './routes/letters'
 import { Route as MatchRouteImport } from './routes/match'
 import { Route as ProblemSolutionRouteImport } from './routes/problem-solution'
 import { Route as ThreadsRouteImport } from './routes/threads'
+import { Route as BoardsPostIdRouteImport } from './routes/boards.$postId'
 import { Route as ChatThreadIdRouteImport } from './routes/chat.$threadId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -53,6 +54,11 @@ const ThreadsRoute = ThreadsRouteImport.update({
   path: '/threads',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BoardsPostIdRoute = BoardsPostIdRouteImport.update({
+  id: '/$postId',
+  path: '/$postId',
+  getParentRoute: () => BoardsRoute,
+} as any)
 const ChatThreadIdRoute = ChatThreadIdRouteImport.update({
   id: '/chat/$threadId',
   path: '/chat/$threadId',
@@ -61,33 +67,36 @@ const ChatThreadIdRoute = ChatThreadIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/boards': typeof BoardsRoute
+  '/boards': typeof BoardsRouteWithChildren
   '/join': typeof JoinRoute
   '/letters': typeof LettersRoute
   '/match': typeof MatchRoute
   '/problem-solution': typeof ProblemSolutionRoute
   '/threads': typeof ThreadsRoute
+  '/boards/$postId': typeof BoardsPostIdRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/boards': typeof BoardsRoute
+  '/boards': typeof BoardsRouteWithChildren
   '/join': typeof JoinRoute
   '/letters': typeof LettersRoute
   '/match': typeof MatchRoute
   '/problem-solution': typeof ProblemSolutionRoute
   '/threads': typeof ThreadsRoute
+  '/boards/$postId': typeof BoardsPostIdRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/boards': typeof BoardsRoute
+  '/boards': typeof BoardsRouteWithChildren
   '/join': typeof JoinRoute
   '/letters': typeof LettersRoute
   '/match': typeof MatchRoute
   '/problem-solution': typeof ProblemSolutionRoute
   '/threads': typeof ThreadsRoute
+  '/boards/$postId': typeof BoardsPostIdRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
 }
 export interface FileRouteTypes {
@@ -100,6 +109,7 @@ export interface FileRouteTypes {
     | '/match'
     | '/problem-solution'
     | '/threads'
+    | '/boards/$postId'
     | '/chat/$threadId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -110,6 +120,7 @@ export interface FileRouteTypes {
     | '/match'
     | '/problem-solution'
     | '/threads'
+    | '/boards/$postId'
     | '/chat/$threadId'
   id:
     | '__root__'
@@ -120,12 +131,13 @@ export interface FileRouteTypes {
     | '/match'
     | '/problem-solution'
     | '/threads'
+    | '/boards/$postId'
     | '/chat/$threadId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  BoardsRoute: typeof BoardsRoute
+  BoardsRoute: typeof BoardsRouteWithChildren
   JoinRoute: typeof JoinRoute
   LettersRoute: typeof LettersRoute
   MatchRoute: typeof MatchRoute
@@ -185,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ThreadsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/boards/$postId': {
+      id: '/boards/$postId'
+      path: '/$postId'
+      fullPath: '/boards/$postId'
+      preLoaderRoute: typeof BoardsPostIdRouteImport
+      parentRoute: typeof BoardsRoute
+    }
     '/chat/$threadId': {
       id: '/chat/$threadId'
       path: '/chat/$threadId'
@@ -195,9 +214,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface BoardsRouteChildren {
+  BoardsPostIdRoute: typeof BoardsPostIdRoute
+}
+
+const BoardsRouteChildren: BoardsRouteChildren = {
+  BoardsPostIdRoute: BoardsPostIdRoute,
+}
+
+const BoardsRouteWithChildren =
+  BoardsRoute._addFileChildren(BoardsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  BoardsRoute: BoardsRoute,
+  BoardsRoute: BoardsRouteWithChildren,
   JoinRoute: JoinRoute,
   LettersRoute: LettersRoute,
   MatchRoute: MatchRoute,

@@ -26,25 +26,25 @@ const RESEARCH = [
     stat: "1 in 3",
     label: "students report frequent loneliness",
     source:
-      "Global higher-education wellbeing surveys consistently place frequent loneliness among roughly a third of undergraduates.",
+      "Global higher-education wellbeing surveys consistently place frequent loneliness among roughly a third of undergraduates. [1]",
   },
   {
     stat: "~85%",
     label: "of UAE university students are expatriates",
     source:
-      "UAE campuses are among the most internationally mixed in the world, so most students arrive without a school friend group.",
+      "UAE campuses are among the most internationally mixed in the world, so most students arrive without a school friend group. [2]",
   },
   {
-    stat: "20 min",
-    label: "median campus commute in Dubai clusters",
+    stat: "30 min",
+    label: "typical hop between two Dubai clusters",
     source:
-      "Commuter campuses in Academic City, Knowledge Village and Sharjah mean many students leave straight after lectures.",
+      "Dubai's campuses sit in three separate clusters — Academic City, Knowledge Park and Silicon Oasis — plus University City in Sharjah, so most students commute in and leave straight after lectures. [3]",
   },
   {
-    stat: "5",
-    label: "universities in one small radius, barely mixing",
+    stat: "4",
+    label: "clusters holding all ten campuses",
     source:
-      "RIT, MDX, AUS, Heriot-Watt and Wollongong sit minutes apart but their student bodies rarely interact outside formal events.",
+      "Manipal, BITS and Amity share one street in Academic City; MDX, Heriot-Watt, UOWD and Murdoch share Knowledge Park; AUS and UOS are neighbours in Sharjah. Neighbours on paper, strangers in practice. [3]",
   },
 ];
 
@@ -168,10 +168,9 @@ function ProblemSolution() {
             ))}
           </div>
           <p className="mt-4 text-xs text-muted-foreground">
-            Figures above are indicative, drawn from published student-wellbeing research and UAE
-            higher-education demographics; the quotes are paraphrased from informal student
-            conversations during this challenge. They are used to frame the design problem, not as
-            formal statistical claims.
+            Figures above are indicative and are used to frame the design problem, not as formal
+            statistical claims. Sources are listed in the References section below; campus locations
+            in [3] are factual.
           </p>
         </section>
 
@@ -221,12 +220,84 @@ function ProblemSolution() {
               existing campus life instead of competing with it.
             </p>
             <p className="text-pretty text-muted-foreground">
-              <strong className="text-ink">For the country&apos;s student ecosystem.</strong> Five
-              universities sit minutes apart in the UAE and barely mix. Cross-campus anonymous pairing
-              quietly builds a single student community out of ten separate ones — and turns it into
-              coffee, events and real projects.
+              <strong className="text-ink">For the wider UAE student ecosystem.</strong> Ten
+              universities sit in four clusters — three in Academic City, four in Knowledge Park, RIT
+              alone in Silicon Oasis, and two side by side in Sharjah University City — and barely
+              mix, even when they share a street. Cross-campus anonymous pairing quietly builds one
+              student community out of ten. [4]
             </p>
           </div>
+        </section>
+
+        <section className="mt-10" aria-labelledby="who">
+          <h2 id="who" className="text-2xl font-bold tracking-tight">
+            5 · Who this helps
+          </h2>
+          <div className="mt-4 grid gap-4 lg:grid-cols-3">
+            <div className="glass rounded-3xl p-5">
+              <p className="font-mono text-[10px] tracking-widest text-coral uppercase">
+                The individual student
+              </p>
+              <h3 className="mt-2 text-lg font-bold">One low-risk conversation</h3>
+              <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+                <li>Transfers and mid-year joiners who missed the first-week friend scramble.</li>
+                <li>Shy and neurodivergent students for whom club culture is exhausting. [1]</li>
+                <li>Commuters who are on campus for lectures only.</li>
+                <li>Postgraduates in cohorts of under ten people.</li>
+              </ul>
+            </div>
+            <div className="glass rounded-3xl p-5">
+              <p className="font-mono text-[10px] tracking-widest text-teal uppercase">
+                The individual campus
+              </p>
+              <h3 className="mt-2 text-lg font-bold">Fuller events, fewer dropouts</h3>
+              <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+                <li>Socially connected students attend more and withdraw less. [1]</li>
+                <li>The boards feed people into existing clubs instead of competing with them.</li>
+                <li>Student affairs gets a channel that reaches the students who never show up.</li>
+                <li>The Great Reveal booth is a ready-made end-of-term campus event.</li>
+              </ul>
+            </div>
+            <div className="glass rounded-3xl p-5">
+              <p className="font-mono text-[10px] tracking-widest text-plum uppercase">
+                The wider UAE ecosystem
+              </p>
+              <h3 className="mt-2 text-lg font-bold">Ten campuses, one student body</h3>
+              <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+                <li>Academic City, Knowledge Park, Silicon Oasis and Sharjah stop being silos. [3]</li>
+                <li>Cross-campus project crews that no single university could staff alone.</li>
+                <li>An expatriate-majority student body builds ties across nationalities. [2]</li>
+                <li>Shared events cost less per campus and reach further.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-10" aria-labelledby="refs">
+          <h2 id="refs" className="text-2xl font-bold tracking-tight">
+            References
+          </h2>
+          <ol className="glass mt-4 space-y-2 rounded-[28px] p-6 text-sm text-muted-foreground">
+            <li>
+              <strong className="text-ink">[1]</strong> Published higher-education wellbeing research
+              on student loneliness, belonging, attainment and withdrawal intent (indicative figures,
+              not a formal meta-analysis).
+            </li>
+            <li>
+              <strong className="text-ink">[2]</strong> UAE higher-education demographics: the
+              student population is overwhelmingly expatriate and internationally mixed.
+            </li>
+            <li>
+              <strong className="text-ink">[3]</strong> Campus locations verified per university:
+              Manipal, BITS Pilani and Amity in Dubai International Academic City; Middlesex,
+              Heriot-Watt, Wollongong and Murdoch in Dubai Knowledge Park; RIT Dubai in Dubai Silicon
+              Oasis; AUS and University of Sharjah in University City, Sharjah.
+            </li>
+            <li>
+              <strong className="text-ink">[4]</strong> Informal student interviews conducted across
+              these campuses during this challenge; quotes are paraphrased.
+            </li>
+          </ol>
         </section>
 
         <div className="glass mt-10 flex flex-wrap items-center justify-between gap-4 rounded-[28px] p-6">

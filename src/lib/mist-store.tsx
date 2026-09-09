@@ -54,9 +54,72 @@ export const CAMPUS_PREF_LABEL: Record<CampusPref, { title: string; body: string
 export const GREAT_REVEAL_EVENT = {
   name: "The Great Reveal",
   date: "Thu 10 Dec 2026 · 5:00 PM",
-  venue: "Meetup booth, RIT Dubai atrium (Silicon Oasis)",
-  note: "Satellite booths at AUS, UOS and Knowledge Park the same evening.",
+  venue: "Meetup booth, RIT Dubai atrium (Dubai Silicon Oasis)",
+  note: "Satellite booths at Academic City, Knowledge Park and Sharjah University City the same evening.",
 };
+
+/** Where each campus physically sits — used for honest travel copy. */
+export const CAMPUS_AREA: Record<University, string> = {
+  "RIT Dubai": "Dubai Silicon Oasis",
+  "Middlesex University Dubai": "Dubai Knowledge Park",
+  "American University of Sharjah": "University City, Sharjah",
+  "Heriot-Watt University Dubai": "Dubai Knowledge Park",
+  "University of Wollongong in Dubai": "Dubai Knowledge Park",
+  "Manipal Academy of Higher Education Dubai": "Dubai International Academic City",
+  "BITS Pilani Dubai": "Dubai International Academic City",
+  "Murdoch University Dubai": "Dubai Knowledge Park",
+  "University of Sharjah": "University City, Sharjah",
+  "Amity University Dubai": "Dubai International Academic City",
+};
+
+export const CAMPUS_CLUSTERS: { area: string; blurb: string; members: University[] }[] = [
+  {
+    area: "Dubai International Academic City",
+    blurb: "Three campuses on walking distance from each other.",
+    members: [
+      "Manipal Academy of Higher Education Dubai",
+      "BITS Pilani Dubai",
+      "Amity University Dubai",
+    ],
+  },
+  {
+    area: "Dubai Knowledge Park",
+    blurb: "Four campuses sharing one strip of Al Sufouh.",
+    members: [
+      "Middlesex University Dubai",
+      "Heriot-Watt University Dubai",
+      "University of Wollongong in Dubai",
+      "Murdoch University Dubai",
+    ],
+  },
+  {
+    area: "Dubai Silicon Oasis",
+    blurb: "On its own — about 10 minutes' drive from Academic City.",
+    members: ["RIT Dubai"],
+  },
+  {
+    area: "University City, Sharjah",
+    blurb: "Two large campuses side by side, ~40 minutes from Dubai.",
+    members: ["American University of Sharjah", "University of Sharjah"],
+  },
+];
+
+/** Rough travel time between the two campus clusters, in plain words. */
+export function travelNote(a: University, b: University) {
+  const areaA = CAMPUS_AREA[a];
+  const areaB = CAMPUS_AREA[b];
+  if (areaA === areaB) return `Same area — ${areaA}. Walkable.`;
+  const dubai = (x: string) => x !== "University City, Sharjah";
+  if (dubai(areaA) !== dubai(areaB)) return `${areaA} ↔ ${areaB} · roughly 40 minutes by car.`;
+  if (areaA.includes("Silicon") || areaB.includes("Silicon")) {
+    const other = areaA.includes("Silicon") ? areaB : areaA;
+    return other.includes("Academic City")
+      ? "Silicon Oasis ↔ Academic City · about 10 minutes by car."
+      : `${areaA} ↔ ${areaB} · about 30 minutes by car.`;
+  }
+  return `${areaA} ↔ ${areaB} · about 30 minutes by car or metro + feeder bus.`;
+}
+
 
 export const LETTER_INTERVAL_MS = 24 * 60 * 60 * 1000;
 /** Demo post: replies arrive after this delay instead of next morning. */
@@ -171,7 +234,19 @@ export type BoardPost = {
   responses: number;
   joined: boolean;
   mine?: boolean;
+  emoji?: string;
+  spots?: number;
+  hostNote?: string;
+  plan?: string[];
+  interestedFrom?: University[];
 };
+
+export const BOARD_CTA: Record<BoardKind, { idle: string; joined: string; verb: string }> = {
+  coffee: { idle: "Save me a seat", joined: "Seat saved — tap to give it up", verb: "sitting down" },
+  event: { idle: "Be my plus one", joined: "You're the plus one — tap to bail", verb: "going" },
+  project: { idle: "Join the crew", joined: "You're on the crew — tap to step off", verb: "building" },
+};
+
 
 type State = {
   profile: Profile | null;
@@ -181,7 +256,7 @@ type State = {
   letters: Letter[];
 };
 
-const STORAGE_KEY = "mist.state.v2";
+const STORAGE_KEY = "mist.state.v3";
 
 const EMPTY_STATE = (): State => ({
   profile: null,
@@ -230,103 +305,266 @@ const SEED_POSTS: BoardPost[] = [
   {
     id: "p1",
     kind: "coffee",
-    title: "Someone to explain thermodynamics over karak",
-    body: "2nd year engineering. Meeting near the food court, bring your trauma — I have the coffee.",
+    emoji: "☕",
+    title: "Karak and thermodynamics, in that order",
+    body: "Second-year engineering at UOWD. I understand entropy emotionally but not mathematically. Bring a pen, I'll bring the karak from the Knowledge Park cafeteria.",
     university: "University of Wollongong in Dubai",
-    when: "Thu 4:00 PM · Knowledge Village",
+    when: "Thu 4:00 PM · Knowledge Park, block 5 courtyard",
     alias: "Marine Koi",
     responses: 12,
     joined: false,
+    spots: 2,
+    hostNote: "Host has completed 4 coffee chats · never no-showed",
+    plan: [
+      "Meet by the fountain steps, both wearing something teal so we spot each other.",
+      "45 minutes max — I have a lab at 5.",
+      "You stay masked the whole time if you want. Aliases only is completely normal here.",
+    ],
+    interestedFrom: [
+      "Heriot-Watt University Dubai",
+      "Murdoch University Dubai",
+      "Middlesex University Dubai",
+    ],
   },
   {
     id: "p2",
     kind: "event",
-    title: "Need one more for the film fest panel",
-    body: "Friday 7pm at the Dubai Design District. Looking for a wingman who asks weird questions.",
+    emoji: "🎬",
+    title: "One more human for the d3 film night panel",
+    body: "Heriot-Watt, Knowledge Park. I have two tickets and one friend who cancelled twice. Looking for someone who asks the weird question during Q&A so I don't have to.",
     university: "Heriot-Watt University Dubai",
-    when: "Fri 7:00 PM · d3",
+    when: "Fri 7:00 PM · Dubai Design District (d3)",
     alias: "Ivory Wren",
     responses: 8,
     joined: false,
+    spots: 1,
+    hostNote: "Ticket already paid for · you owe me nothing but conversation",
+    plan: [
+      "Meet at the d3 building 7 steps at 6:40 PM.",
+      "Screening runs 90 minutes, Q&A after.",
+      "We can split a Careem back towards Knowledge Park or Academic City.",
+    ],
+    interestedFrom: ["University of Wollongong in Dubai", "American University of Sharjah"],
   },
   {
     id: "p3",
     kind: "project",
-    title: "Crew of 3 for the campus hackathon, no egos",
-    body: "Building something for orientation week. Want a designer + someone who actually ships.",
+    emoji: "⚡",
+    title: "Hackathon crew of 3. No egos, no 3am heroics.",
+    body: "RIT Dubai, Silicon Oasis. Building an orientation-week tool. I write backend badly but reliably. Need a designer and one person who actually finishes things.",
     university: "RIT Dubai",
-    when: "Registration closes Sun",
+    when: "Registration closes Sun · 6 weeks of build",
     alias: "Cobalt Lynx",
     responses: 5,
     joined: false,
+    spots: 2,
+    hostNote: "Repo already set up · we work Sat afternoons only",
+    plan: [
+      "First call is voice-only and masked — nobody has to show a face.",
+      "Weekly two-hour session, in person at the RIT library or online.",
+      "If we submit, names go on the entry — so we'd unmask before the deadline, together.",
+    ],
+    interestedFrom: ["BITS Pilani Dubai", "Amity University Dubai"],
   },
   {
     id: "p4",
     kind: "coffee",
-    title: "First-semester transfer, know nobody",
-    body: "Moved from Sharjah campus. Anyone free for a 20 minute walk-and-talk between lectures?",
+    emoji: "🚶",
+    title: "Transferred to AUS in week 6. I know exactly zero people.",
+    body: "Sharjah University City. Everyone already has their group and I've eaten lunch in my car three times this week, which is objectively tragic. 20-minute walk-and-talk?",
     university: "American University of Sharjah",
-    when: "Any weekday, 1–3 PM",
+    when: "Any weekday, 1–3 PM · University City ring road",
     alias: "Saffron Moth",
     responses: 17,
     joined: false,
+    spots: 3,
+    hostNote: "Most-answered post on the board this week",
+    plan: [
+      "We walk the loop between AUS and UOS — it's about 20 minutes.",
+      "No coffee shop, no bill, no awkward 'should we leave now' moment.",
+      "Masks stay on. First names only if it happens naturally.",
+    ],
+    interestedFrom: ["University of Sharjah", "American University of Sharjah"],
   },
   {
     id: "p5",
     kind: "project",
-    title: "Looking for a co-founder-ish person for a tiny app",
-    body: "Idea: campus carpool between Sharjah and Dubai. I do backend, need product/design brain.",
+    emoji: "🚗",
+    title: "Carpool app for the Sharjah → Dubai commute (someone please)",
+    body: "MDX, Knowledge Park. I do the 40-minute drive from Sharjah every morning with three empty seats and rage. I can build backend. I need a product brain who has opinions.",
     university: "Middlesex University Dubai",
-    when: "Starting next week",
+    when: "Starting next week · 2 evenings a week",
     alias: "Amber Falcon",
     responses: 9,
     joined: false,
+    spots: 2,
+    hostNote: "Already surveyed 60 commuters · data is real",
+    plan: [
+      "Week 1: we scope it over letters, no meetings.",
+      "Week 2: one call, still masked.",
+      "If it works, we pitch it to both student councils.",
+    ],
+    interestedFrom: ["University of Sharjah", "RIT Dubai", "Heriot-Watt University Dubai"],
   },
   {
     id: "p6",
     kind: "event",
-    title: "Two tickets, one very quiet friend group",
-    body: "Inter-uni sports day. Would rather show up with a stranger than alone, honestly.",
+    emoji: "🏐",
+    title: "Inter-uni sports day. I'd rather bring a stranger than nobody.",
+    body: "RIT Dubai. It's a 10-minute drive from Silicon Oasis over to Academic City, so Manipal/BITS/Amity people, this one is basically next door for you.",
     university: "RIT Dubai",
-    when: "Sat 9:00 AM · Academic City",
+    when: "Sat 9:00 AM · Academic City sports fields",
     alias: "Olive Orca",
     responses: 6,
     joined: false,
+    spots: 4,
+    hostNote: "I can drive two people from Silicon Oasis",
+    plan: [
+      "Meet at gate 2 at 8:45 AM.",
+      "We sign up as a mixed-campus team, which scores bonus points.",
+      "Breakfast after at the Academic City food street.",
+    ],
+    interestedFrom: ["BITS Pilani Dubai", "Manipal Academy of Higher Education Dubai"],
   },
   {
     id: "p7",
     kind: "coffee",
-    title: "BITS to Manipal is a 12 minute walk. Anyone?",
-    body: "Same road, never met anyone from next door. Chai at the Academic City food street?",
+    emoji: "🫖",
+    title: "BITS to Manipal is a four-minute walk. We have never met.",
+    body: "Same road in Academic City, same canteen prices, entirely separate universes. Chai at the food street and we fix inter-campus relations personally.",
     university: "BITS Pilani Dubai",
-    when: "Tue 3:30 PM · Academic City",
+    when: "Tue 3:30 PM · Academic City food street",
     alias: "Indigo Heron",
     responses: 11,
     joined: false,
+    spots: 3,
+    hostNote: "Open to Amity people too — you're on the same block",
+    plan: [
+      "Meet outside the food street entrance, I'll be the one holding two chais.",
+      "30 minutes. If it's awkward we blame the traffic and leave.",
+      "Aliases only unless you say otherwise.",
+    ],
+    interestedFrom: [
+      "Manipal Academy of Higher Education Dubai",
+      "Amity University Dubai",
+      "BITS Pilani Dubai",
+    ],
   },
   {
     id: "p8",
     kind: "project",
-    title: "Murdoch media student needs a UOS science brain",
-    body: "Making a short doc on Sharjah's night sky. Need someone who can explain light pollution on camera.",
+    emoji: "🔭",
+    title: "Murdoch media student needs a UOS science brain on camera",
+    body: "Short doc about how much of the night sky Sharjah has lost. I can shoot and edit. I cannot explain light pollution without saying 'the sky is, like, broken'.",
     university: "Murdoch University Dubai",
-    when: "Shooting over 3 weekends",
+    when: "3 weekends · shooting in Sharjah + Al Qudra",
     alias: "Velvet Ibis",
     responses: 4,
     joined: false,
+    spots: 1,
+    hostNote: "Camera gear covered · petrol split",
+    plan: [
+      "Sunday call to script your two minutes.",
+      "One night shoot at Al Qudra, one on the UOS campus.",
+      "You can appear voice-only if you'd rather stay unseen.",
+    ],
+    interestedFrom: ["University of Sharjah", "American University of Sharjah"],
   },
   {
     id: "p9",
     kind: "event",
-    title: "Amity cultural night — need a plus one who dances badly",
-    body: "So I'm not the only one. Open to any campus, the bus from Sharjah is easy.",
+    emoji: "💃",
+    title: "Amity cultural night — need a plus one who also dances badly",
+    body: "Academic City. I refuse to be the only person doing the wrong steps in the front row. Manipal and BITS are literally down the road, no excuses.",
     university: "Amity University Dubai",
-    when: "Wed 6:30 PM · DIAC",
+    when: "Wed 6:30 PM · Amity auditorium, Academic City",
     alias: "Saffron Fox",
     responses: 14,
     joined: false,
+    spots: 2,
+    hostNote: "Guest passes handled at the door",
+    plan: [
+      "Meet at the auditorium doors at 6:15 PM.",
+      "Two hours, snacks included, exit whenever.",
+      "Nobody unmasks unless both of you want to.",
+    ],
+    interestedFrom: [
+      "BITS Pilani Dubai",
+      "Manipal Academy of Higher Education Dubai",
+      "RIT Dubai",
+    ],
+  },
+  {
+    id: "p10",
+    kind: "coffee",
+    emoji: "📚",
+    title: "Postgrad, cohort of nine, all of them are married with children",
+    body: "UOS. Lovely people, but nobody wants to sit in a café for two hours and complain about referencing styles. I do. Sharjah or Dubai, I'll travel.",
+    university: "University of Sharjah",
+    when: "Sunday afternoons · Sharjah or anywhere on the metro red line",
+    alias: "Velvet Heron",
+    responses: 7,
+    joined: false,
+    spots: 2,
+    hostNote: "Happy to come to Dubai — the 40 minutes is fine, honestly",
+    plan: [
+      "Pick a café halfway, probably somewhere near the airport road.",
+      "Bring whatever you're procrastinating on.",
+      "Two hours of parallel work with talking in between.",
+    ],
+    interestedFrom: ["American University of Sharjah", "Middlesex University Dubai"],
+  },
+  {
+    id: "p11",
+    kind: "event",
+    emoji: "🎧",
+    title: "Free gig at Knowledge Park and my friends only like studying",
+    body: "Manipal, Academic City. It's a half-hour drive across town for me, which I will happily do if someone is on the other end of it.",
+    when: "Thu 8:00 PM · Knowledge Park amphitheatre",
+    university: "Manipal Academy of Higher Education Dubai",
+    alias: "Coral Wren",
+    responses: 10,
+    joined: false,
+    spots: 3,
+    hostNote: "Driving from Academic City · two spare seats",
+    plan: [
+      "I leave Academic City at 7:15 PM, pickup possible on the way.",
+      "Gig ends around 10.",
+      "Knowledge Park people: you can just walk over, obviously.",
+    ],
+    interestedFrom: [
+      "Heriot-Watt University Dubai",
+      "University of Wollongong in Dubai",
+      "Murdoch University Dubai",
+    ],
+  },
+  {
+    id: "p12",
+    kind: "project",
+    emoji: "🌱",
+    title: "Ten campuses, zero shared clothing swap. Let's fix that.",
+    body: "Heriot-Watt, Knowledge Park. Idea: one rotating swap that visits Knowledge Park, Academic City and Sharjah University City over a term. Need people at the other two.",
+    when: "Planning now · first swap after midterms",
+    university: "Heriot-Watt University Dubai",
+    alias: "Olive Moth",
+    responses: 13,
+    joined: false,
+    spots: 5,
+    hostNote: "Needs at least one person per cluster · 2 of 3 covered",
+    plan: [
+      "Anonymous planning over letters first — no meetings until we have a date.",
+      "Each area lead books one room on their own campus.",
+      "Reveal is optional even on the day; volunteers can wear alias badges.",
+    ],
+    interestedFrom: [
+      "Amity University Dubai",
+      "University of Sharjah",
+      "RIT Dubai",
+      "Middlesex University Dubai",
+    ],
   },
 ];
+
 
 const LETTER_OPENERS = [
   {
@@ -404,6 +642,7 @@ type Ctx = {
     mode: ChatMode;
     duration: ChatDuration;
     sharedInterest: string;
+    partner?: { alias: string; university: University };
   }) => Thread;
   sendMessage: (threadId: string, text: string) => void;
   offerReveal: (threadId: string) => void;
@@ -415,6 +654,7 @@ type Ctx = {
   sendLetter: (subject: string, body: string, seal: SealColor) => void;
   markLetterRead: (id: string) => void;
   proposeGreatReveal: () => void;
+  skipADay: () => void;
 };
 
 const MistContext = createContext<Ctx | null>(null);
@@ -530,6 +770,15 @@ export function MistProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  const skipADay = useCallback(() => {
+    setState((s) => ({
+      ...s,
+      letters: s.letters.map((l) =>
+        l.fromMe ? { ...l, sentAt: l.sentAt - LETTER_INTERVAL_MS, deliverAt: l.deliverAt - LETTER_INTERVAL_MS } : l,
+      ),
+    }));
+  }, []);
+
   const proposeGreatReveal = useCallback(() => {
     setState((s) =>
       s.penPal ? { ...s, penPal: { ...s.penPal, greatReveal: { ...s.penPal.greatReveal, mine: true } } } : s,
@@ -550,7 +799,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const createThread = useCallback<Ctx["createThread"]>(
-    ({ mode, duration, sharedInterest }) => {
+    ({ mode, duration, sharedInterest, partner }) => {
       const me: Member = {
         alias: state.profile?.alias ?? randomAlias(),
         university: state.profile?.university ?? UNIVERSITIES[0],
@@ -561,8 +810,11 @@ export function MistProvider({ children }: { children: ReactNode }) {
       const otherCount = mode === "pair" ? 1 : 2 + Math.floor(Math.random() * 2);
       const pool = campusPool(state.profile);
       const others: Member[] = Array.from({ length: otherCount }, (_, i) => ({
-        alias: randomAlias(),
-        university: pool[Math.floor(Math.random() * pool.length)]!,
+        alias: i === 0 && partner ? partner.alias : randomAlias(),
+        university:
+          i === 0 && partner
+            ? partner.university
+            : pool[Math.floor(Math.random() * pool.length)]!,
         revealedName: FAKE_NAMES[(i + Math.floor(Math.random() * 4)) % FAKE_NAMES.length]!,
         revealed: false,
       }));
@@ -766,6 +1018,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
       sendLetter,
       markLetterRead,
       proposeGreatReveal,
+      skipADay,
     }),
     [
       ready,
@@ -783,6 +1036,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
       sendLetter,
       markLetterRead,
       proposeGreatReveal,
+      skipADay,
     ],
   );
 

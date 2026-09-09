@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MistShell } from "@/components/MistShell";
+import { CampusOrbit } from "@/components/CampusOrbit";
+import { PostageStamp } from "@/components/Postal";
 import {
   GREAT_REVEAL_EVENT,
   UNIVERSITIES,
@@ -96,7 +98,15 @@ function EnvelopeStack() {
 
 function Index() {
   const { profile, penPal, letters, threads } = useMist();
+  const { posts } = useMist();
   const unread = letters.filter((l) => !l.fromMe && !l.read).length;
+  const activeCampuses = Array.from(
+    new Set([
+      ...(penPal ? [penPal.university] : []),
+      ...threads.flatMap((t) => t.members.filter((m) => !m.isMe).map((m) => m.university)),
+      ...posts.filter((p) => p.joined).map((p) => p.university),
+    ]),
+  );
 
   return (
     <MistShell>
@@ -108,15 +118,15 @@ function Index() {
             Verified students · 10 UAE campuses
           </span>
           <h1 className="mt-5 animate-rise text-[2.75rem] leading-[0.92] font-extrabold tracking-tight text-balance sm:text-6xl xl:text-7xl">
-            Secret pen pals,
+            Ten campuses.
             <br />
-            <span className="font-serif font-normal italic">slow on purpose,</span>
+            <span className="font-serif font-normal italic">One letter a day.</span>
             <br />
-            <span className="text-gradient">across every campus.</span>
+            <span className="text-gradient">No names attached.</span>
           </h1>
           <p className="mt-5 max-w-[46ch] animate-rise text-base text-pretty text-muted-foreground sm:text-lg">
-            Mist pairs you anonymously with a student from any of ten UAE universities. Write one
-            letter a day, or open a masked chat for minutes. Reveal only when you both want to.
+            Mist is secret pen pals for verified UAE students. Write slowly, stay masked, and
+            reveal only if you both decide to.
           </p>
           <div className="mt-7 flex animate-rise flex-wrap items-center gap-3">
             <Link
@@ -132,6 +142,24 @@ function Index() {
               Quick masked chat
             </Link>
           </div>
+          <Link
+            to={profile ? "/letters" : "/join"}
+            className="glass mt-6 flex animate-rise items-center gap-4 rounded-3xl p-4 transition-transform hover:-translate-y-1"
+          >
+            <PostageStamp glyph="🎭" caption="10 Dec" tint="bg-coral/25" />
+            <span className="min-w-0">
+              <span className="block font-mono text-[10px] tracking-widest text-coral uppercase">
+                The Great Reveal · {GREAT_REVEAL_EVENT.date}
+              </span>
+              <span className="mt-0.5 block font-serif text-xl leading-snug">
+                A term of letters, then you both decide whether to meet.
+              </span>
+              <span className="block text-xs text-muted-foreground">
+                {GREAT_REVEAL_EVENT.venue} · only happens if you both say yes
+              </span>
+            </span>
+          </Link>
+
           <div className="mt-6 flex animate-rise flex-wrap gap-2">
             {UNIVERSITIES.map((u, i) => (
               <span
@@ -179,6 +207,33 @@ function Index() {
             </p>
             <p className="text-xs text-background/60">{GREAT_REVEAL_EVENT.venue}</p>
           </Link>
+
+          <div className="rounded-2xl bg-background/10 p-4 sm:col-span-3">
+            <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_300px] sm:items-center">
+              <div>
+                <p className="font-mono text-[10px] tracking-widest text-lilac uppercase">
+                  Your campus orbit
+                </p>
+                <p className="mt-1 text-2xl font-extrabold">
+                  {activeCampuses.length} of 10{" "}
+                  <span className="text-base font-medium text-background/70">campuses reached</span>
+                </p>
+                <p className="mt-1 max-w-[46ch] text-xs text-background/60">
+                  Every campus you write to, chat with or answer an invite from is pulled closer to
+                  the centre. Your pen pal&apos;s campus is the coral one.
+                </p>
+              </div>
+              <div className="text-background">
+                <CampusOrbit
+                  home={profile.university}
+                  activeCampuses={activeCampuses}
+                  penPalCampus={penPal?.university ?? null}
+                  letters={letters.length}
+                  threads={threads.length}
+                />
+              </div>
+            </div>
+          </div>
         </section>
       ) : null}
 

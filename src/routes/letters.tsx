@@ -111,6 +111,7 @@ function Letters() {
     sendLetter,
     markLetterRead,
     proposeGreatReveal,
+    skipADay,
   } = useMist();
   const [openId, setOpenId] = useState<string | null>(null);
   const [subject, setSubject] = useState("");
@@ -138,6 +139,9 @@ function Letters() {
   const lastMine = letters.filter((l) => l.fromMe).sort((a, b) => b.sentAt - a.sentAt)[0];
   const nextAllowedAt = lastMine ? lastMine.sentAt + LETTER_INTERVAL_MS : 0;
   const canSend = now >= nextAllowedAt;
+  const progress = canSend
+    ? 1
+    : Math.min(1, Math.max(0, 1 - (nextAllowedAt - now) / LETTER_INTERVAL_MS));
   const awaitingReply = lastMine && !letters.some((l) => !l.fromMe && l.sentAt > lastMine.sentAt);
 
   if (ready && !profile) {
@@ -271,14 +275,48 @@ function Letters() {
                 window.setTimeout(() => setJustSent(false), 2400);
               }}
             >
-              <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <h2 className="text-sm font-semibold">Draft today&apos;s letter</h2>
-                <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-                  {canSend
-                    ? "Post open"
-                    : `Next letter in ${formatCountdown(nextAllowedAt - now)}`}
-                </p>
+                <div className="flex items-center gap-3">
+                  <div
+                    aria-hidden="true"
+                    className="grid size-12 shrink-0 place-items-center rounded-full"
+                    style={{
+                      background: `conic-gradient(var(--teal) ${progress * 360}deg, oklch(0.262 0.038 210 / 0.1) 0deg)`,
+                    }}
+                  >
+                    <span className="grid size-9 place-items-center rounded-full bg-background font-mono text-[9px]">
+                      {canSend ? "OPEN" : "WAIT"}
+                    </span>
+                  </div>
+                  <p
+                    role="timer"
+                    aria-live="polite"
+                    className="font-mono text-[11px] tracking-widest text-muted-foreground uppercase"
+                  >
+                    {canSend ? (
+                      <span className="text-teal">Post office open</span>
+                    ) : (
+                      <>
+                        Next letter in
+                        <br />
+                        <span className="text-base text-ink tabular-nums">
+                          {formatCountdown(nextAllowedAt - now)}
+                        </span>
+                      </>
+                    )}
+                  </p>
+                </div>
               </div>
+              {!canSend ? (
+                <button
+                  type="button"
+                  onClick={skipADay}
+                  className="mt-3 w-full rounded-2xl border-2 border-dashed border-lilac/60 bg-lilac/10 px-4 py-2.5 text-xs font-semibold text-plum transition-transform hover:-translate-y-0.5"
+                >
+                  Demo only · skip a day and open the post office now
+                </button>
+              ) : null}
               <label htmlFor="subject" className="sr-only">
                 Subject
               </label>
