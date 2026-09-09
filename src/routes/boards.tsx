@@ -1,8 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { MistShell } from "@/components/MistShell";
 import {
+  BOARD_META,
   UNIVERSITIES,
+  UNIVERSITY_SHORT,
   useMist,
   type BoardKind,
   type University,
@@ -15,7 +17,7 @@ export const Route = createFileRoute("/boards")({
       {
         name: "description",
         content:
-          "Post or answer anonymous invitations: ten-minute coffee chats, event partners and project collaborations across UAE universities.",
+          "Post or answer anonymous invitations: karak-fuelled coffee chats, spare event tickets and project crews across ten UAE universities.",
       },
       { property: "og:title", content: "Coffee chats, event partners & project collabs — Mist" },
       {
@@ -27,15 +29,27 @@ export const Route = createFileRoute("/boards")({
   component: Boards,
 });
 
-const KIND_META: Record<BoardKind, { label: string; icon: string; chip: string }> = {
-  coffee: { label: "Coffee chat", icon: "☕", chip: "bg-coral/15 text-ink" },
-  event: { label: "Event partner", icon: "✦", chip: "bg-teal/15 text-teal" },
-  project: { label: "Project collab", icon: "◎", chip: "bg-aqua/25 text-ink" },
-};
-
 const FILTERS: (BoardKind | "all")[] = ["all", "coffee", "event", "project"];
 
+function Initials({ n }: { n: number }) {
+  const dots = Math.min(4, n);
+  const tints = ["bg-teal", "bg-coral", "bg-lilac", "bg-butter"];
+  return (
+    <span aria-hidden="true" className="flex -space-x-2">
+      {Array.from({ length: dots }, (_, i) => (
+        <span
+          key={i}
+          className={`grid size-6 place-items-center rounded-full border-2 border-background font-mono text-[9px] text-background ${tints[i % tints.length]}`}
+        >
+          ?
+        </span>
+      ))}
+    </span>
+  );
+}
+
 function Boards() {
+  const navigate = useNavigate();
   const { posts, addPost, toggleJoin, profile } = useMist();
   const [filter, setFilter] = useState<BoardKind | "all">("all");
   const [open, setOpen] = useState(false);
@@ -66,6 +80,9 @@ function Boards() {
       when: when.trim().slice(0, 60) || "Flexible",
       university,
       alias: profile?.alias ?? "Anonymous student",
+      vibe: "Fresh post",
+      spots: 1,
+      hostYear: profile?.year ?? "",
     });
     setTitle("");
     setBody("");
@@ -98,7 +115,7 @@ function Boards() {
             <fieldset>
               <legend className="text-sm font-semibold">What kind of invite?</legend>
               <div className="mt-3 flex flex-wrap gap-2">
-                {(Object.keys(KIND_META) as BoardKind[]).map((k) => (
+                {(Object.keys(BOARD_META) as BoardKind[]).map((k) => (
                   <button
                     key={k}
                     type="button"
@@ -110,10 +127,11 @@ function Boards() {
                         : "border-line bg-card text-muted-foreground"
                     }`}
                   >
-                    {KIND_META[k].icon} {KIND_META[k].label}
+                    {BOARD_META[k].icon} {BOARD_META[k].label}
                   </button>
                 ))}
               </div>
+              <p className="mt-2 text-xs text-muted-foreground">{BOARD_META[kind].blurb}</p>
             </fieldset>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -126,7 +144,7 @@ function Boards() {
                   value={title}
                   maxLength={90}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Looking for someone to study statistics with"
+                  placeholder="Someone to fail statistics with, gracefully"
                   className="mt-2 w-full rounded-2xl border border-line bg-card px-4 py-3 text-sm"
                 />
               </div>
@@ -203,7 +221,7 @@ function Boards() {
                   : "border-line bg-card text-muted-foreground"
               }`}
             >
-              {f === "all" ? "Everything" : KIND_META[f].label}
+              {f === "all" ? "Everything" : BOARD_META[f].label}
             </button>
           ))}
           <span className="ml-auto font-mono text-xs text-muted-foreground">
@@ -212,47 +230,71 @@ function Boards() {
         </div>
 
         <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {visible.map((p) => (
-            <article
-              key={p.id}
-              className="glass flex flex-col rounded-3xl p-5 transition-transform hover:-translate-y-1"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span
-                  className={`rounded-full px-3 py-1 text-xs font-semibold ${KIND_META[p.kind].chip}`}
+          {visible.map((p) => {
+            const meta = BOARD_META[p.kind];
+            return (
+              <article
+                key={p.id}
+                className="glass flex flex-col rounded-3xl p-5 transition-transform hover:-translate-y-1"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${meta.chip}`}>
+                    {meta.icon} {meta.label}
+                  </span>
+                  <span className="font-mono text-[10px] text-muted-foreground">
+                    {UNIVERSITY_SHORT[p.university]}
+                  </span>
+                </div>
+                <Link
+                  to="/invite/$postId"
+                  params={{ postId: p.id }}
+                  className="mt-4 text-lg leading-snug font-bold hover:underline"
                 >
-                  {KIND_META[p.kind].icon} {KIND_META[p.kind].label}
-                </span>
-                <span className="font-mono text-[10px] text-muted-foreground">{p.university}</span>
-              </div>
-              <h2 className="mt-4 text-lg leading-snug font-bold">{p.title}</h2>
-              <p className="mt-2 text-sm text-muted-foreground">{p.body}</p>
-              <p className="mt-3 font-mono text-[11px] tracking-widest text-teal uppercase">
-                {p.when}
-              </p>
-              <div className="mt-5 flex items-center justify-between border-t border-line pt-4">
-                <span className="text-xs text-muted-foreground">
-                  {p.alias} · {p.responses} interested
-                </span>
-                <button
-                  onClick={() => toggleJoin(p.id)}
-                  className={`rounded-full px-4 py-2 text-xs font-semibold transition-transform hover:-translate-y-0.5 ${
-                    p.joined
-                      ? "bg-teal text-teal-foreground"
-                      : "bg-ink text-background"
-                  }`}
-                >
-                  {p.joined
-                    ? "You're in — tap to withdraw"
-                    : p.kind === "coffee"
-                      ? "Grab a seat"
-                      : p.kind === "event"
-                        ? "Volunteer"
-                        : "Join crew"}
-                </button>
-              </div>
-            </article>
-          ))}
+                  {p.title}
+                </Link>
+                <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{p.body}</p>
+                <p className="mt-3 font-mono text-[11px] tracking-widest text-teal uppercase">
+                  {p.when}
+                </p>
+                <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                  {p.vibe ? (
+                    <span className="rounded-full bg-ink/5 px-2 py-0.5 font-mono uppercase">
+                      {p.vibe}
+                    </span>
+                  ) : null}
+                  {p.spots ? (
+                    <span className="rounded-full bg-ink/5 px-2 py-0.5 font-mono uppercase">
+                      {p.spots} spot{p.spots > 1 ? "s" : ""} left
+                    </span>
+                  ) : null}
+                </div>
+
+                <div className="mt-auto pt-5">
+                  <div className="flex items-center gap-2 border-t border-line pt-4">
+                    <Initials n={p.responses} />
+                    <span className="text-xs text-muted-foreground">
+                      <strong className="text-ink">{p.responses}</strong> {meta.unit}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    Posted by {p.alias}
+                    {p.hostYear ? ` · ${p.hostYear}` : ""}
+                  </p>
+                  <button
+                    onClick={() => {
+                      if (!p.joined) toggleJoin(p.id);
+                      navigate({ to: "/invite/$postId", params: { postId: p.id } });
+                    }}
+                    className={`mt-3 w-full rounded-full px-4 py-2.5 text-xs font-semibold transition-transform hover:-translate-y-0.5 ${
+                      p.joined ? "bg-teal text-teal-foreground" : "bg-ink text-background"
+                    }`}
+                  >
+                    {p.joined ? "You're in — see the plan" : meta.cta}
+                  </button>
+                </div>
+              </article>
+            );
+          })}
         </div>
       </div>
     </MistShell>
