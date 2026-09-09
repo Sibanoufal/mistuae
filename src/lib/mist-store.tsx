@@ -54,9 +54,72 @@ export const CAMPUS_PREF_LABEL: Record<CampusPref, { title: string; body: string
 export const GREAT_REVEAL_EVENT = {
   name: "The Great Reveal",
   date: "Thu 10 Dec 2026 · 5:00 PM",
-  venue: "Meetup booth, RIT Dubai atrium (Silicon Oasis)",
-  note: "Satellite booths at AUS, UOS and Knowledge Park the same evening.",
+  venue: "Meetup booth, RIT Dubai atrium (Dubai Silicon Oasis)",
+  note: "Satellite booths at Academic City, Knowledge Park and Sharjah University City the same evening.",
 };
+
+/** Where each campus physically sits — used for honest travel copy. */
+export const CAMPUS_AREA: Record<University, string> = {
+  "RIT Dubai": "Dubai Silicon Oasis",
+  "Middlesex University Dubai": "Dubai Knowledge Park",
+  "American University of Sharjah": "University City, Sharjah",
+  "Heriot-Watt University Dubai": "Dubai Knowledge Park",
+  "University of Wollongong in Dubai": "Dubai Knowledge Park",
+  "Manipal Academy of Higher Education Dubai": "Dubai International Academic City",
+  "BITS Pilani Dubai": "Dubai International Academic City",
+  "Murdoch University Dubai": "Dubai Knowledge Park",
+  "University of Sharjah": "University City, Sharjah",
+  "Amity University Dubai": "Dubai International Academic City",
+};
+
+export const CAMPUS_CLUSTERS: { area: string; blurb: string; members: University[] }[] = [
+  {
+    area: "Dubai International Academic City",
+    blurb: "Three campuses on walking distance from each other.",
+    members: [
+      "Manipal Academy of Higher Education Dubai",
+      "BITS Pilani Dubai",
+      "Amity University Dubai",
+    ],
+  },
+  {
+    area: "Dubai Knowledge Park",
+    blurb: "Four campuses sharing one strip of Al Sufouh.",
+    members: [
+      "Middlesex University Dubai",
+      "Heriot-Watt University Dubai",
+      "University of Wollongong in Dubai",
+      "Murdoch University Dubai",
+    ],
+  },
+  {
+    area: "Dubai Silicon Oasis",
+    blurb: "On its own — about 10 minutes' drive from Academic City.",
+    members: ["RIT Dubai"],
+  },
+  {
+    area: "University City, Sharjah",
+    blurb: "Two large campuses side by side, ~40 minutes from Dubai.",
+    members: ["American University of Sharjah", "University of Sharjah"],
+  },
+];
+
+/** Rough travel time between the two campus clusters, in plain words. */
+export function travelNote(a: University, b: University) {
+  const areaA = CAMPUS_AREA[a];
+  const areaB = CAMPUS_AREA[b];
+  if (areaA === areaB) return `Same area — ${areaA}. Walkable.`;
+  const dubai = (x: string) => x !== "University City, Sharjah";
+  if (dubai(areaA) !== dubai(areaB)) return `${areaA} ↔ ${areaB} · roughly 40 minutes by car.`;
+  if (areaA.includes("Silicon") || areaB.includes("Silicon")) {
+    const other = areaA.includes("Silicon") ? areaB : areaA;
+    return other.includes("Academic City")
+      ? "Silicon Oasis ↔ Academic City · about 10 minutes by car."
+      : `${areaA} ↔ ${areaB} · about 30 minutes by car.`;
+  }
+  return `${areaA} ↔ ${areaB} · about 30 minutes by car or metro + feeder bus.`;
+}
+
 
 export const LETTER_INTERVAL_MS = 24 * 60 * 60 * 1000;
 /** Demo post: replies arrive after this delay instead of next morning. */
