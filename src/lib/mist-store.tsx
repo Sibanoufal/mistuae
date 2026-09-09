@@ -642,6 +642,7 @@ type Ctx = {
     mode: ChatMode;
     duration: ChatDuration;
     sharedInterest: string;
+    partner?: { alias: string; university: University };
   }) => Thread;
   sendMessage: (threadId: string, text: string) => void;
   offerReveal: (threadId: string) => void;
@@ -798,7 +799,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const createThread = useCallback<Ctx["createThread"]>(
-    ({ mode, duration, sharedInterest }) => {
+    ({ mode, duration, sharedInterest, partner }) => {
       const me: Member = {
         alias: state.profile?.alias ?? randomAlias(),
         university: state.profile?.university ?? UNIVERSITIES[0],
@@ -809,8 +810,11 @@ export function MistProvider({ children }: { children: ReactNode }) {
       const otherCount = mode === "pair" ? 1 : 2 + Math.floor(Math.random() * 2);
       const pool = campusPool(state.profile);
       const others: Member[] = Array.from({ length: otherCount }, (_, i) => ({
-        alias: randomAlias(),
-        university: pool[Math.floor(Math.random() * pool.length)]!,
+        alias: i === 0 && partner ? partner.alias : randomAlias(),
+        university:
+          i === 0 && partner
+            ? partner.university
+            : pool[Math.floor(Math.random() * pool.length)]!,
         revealedName: FAKE_NAMES[(i + Math.floor(Math.random() * 4)) % FAKE_NAMES.length]!,
         revealed: false,
       }));
