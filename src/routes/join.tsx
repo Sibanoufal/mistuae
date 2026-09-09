@@ -43,6 +43,7 @@ function Join() {
     profile?.campusPref ?? (profile?.crossCampusOnly ? "cross" : "any"),
   );
   const [alias, setAlias] = useState("");
+  const [sealed, setSealed] = useState(false);
 
   useEffect(() => {
     setAlias((current) => current || profile?.alias || randomAlias());
@@ -98,7 +99,37 @@ function Join() {
       crossCampusOnly: campusPref === "cross",
       campusPref,
     });
-    navigate({ to: "/letters" });
+    setSealed(true);
+    window.setTimeout(() => navigate({ to: "/letters" }), 2400);
+  }
+
+  if (sealed) {
+    return (
+      <MistShell>
+        <div className="paper animate-pop relative mx-auto my-16 max-w-lg rounded-[32px] p-8 text-center sm:p-12">
+          <span
+            aria-hidden="true"
+            className="animate-seal mx-auto grid size-24 place-items-center rounded-full bg-coral text-center font-mono text-[10px] leading-tight tracking-widest text-coral-foreground uppercase sticker"
+          >
+            Sealed
+            <br />&amp; sent
+          </span>
+          <p className="mt-6 font-mono text-[11px] tracking-widest text-muted-foreground uppercase">
+            Verification stamped · {new Date().toLocaleDateString("en-GB")}
+          </p>
+          <h1 className="mt-2 font-serif text-4xl leading-tight text-balance">
+            You are now {alias}.
+          </h1>
+          <p className="mt-3 text-pretty text-muted-foreground">
+            Your ID stays on this device. Your mask goes out into the pool of ten campuses. We&apos;re
+            walking you to your letter inbox…
+          </p>
+          <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-ink/10">
+            <div className="h-full w-full origin-left animate-[rise_2.2s_linear] rounded-full bg-gradient-to-r from-teal via-lilac to-coral" />
+          </div>
+        </div>
+      </MistShell>
+    );
   }
 
   return (
