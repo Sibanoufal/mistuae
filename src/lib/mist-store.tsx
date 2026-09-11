@@ -979,7 +979,8 @@ export function MistProvider({ children }: { children: ReactNode }) {
         revealed: false,
         isMe: true,
       };
-      const otherCount = mode === "pair" ? 1 : 2 + Math.floor(Math.random() * 2);
+      const otherCount =
+        mode === "pair" ? 1 : Math.max(2, Math.min(4, (groupSize ?? 4) - 1));
       const pool = campusPool(state.profile);
       const others: Member[] = Array.from({ length: otherCount }, (_, i) => ({
         alias: i === 0 && partner ? partner.alias : randomAlias(),
