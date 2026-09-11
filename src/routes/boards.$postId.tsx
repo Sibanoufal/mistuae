@@ -33,6 +33,8 @@ const KIND_LABEL: Record<BoardKind, string> = {
   coffee: "Coffee chat",
   event: "Event partner",
   project: "Project collab",
+  study: "Course & study",
+  society: "Society event",
 };
 
 function PostDetail() {
