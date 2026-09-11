@@ -303,6 +303,135 @@ function Join() {
           </fieldset>
 
           <fieldset className="mt-6">
+            <legend className="text-sm font-semibold">Why are you here? (pick any)</legend>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Matching runs on purpose first — not photos, not popularity.
+            </p>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              {PURPOSES.map((p) => {
+                const on = purposes.includes(p.id);
+                return (
+                  <button
+                    type="button"
+                    key={p.id}
+                    aria-pressed={on}
+                    onClick={() => togglePurpose(p.id)}
+                    className={`rounded-2xl border p-3 text-left transition-transform hover:-translate-y-0.5 ${
+                      on ? "border-teal bg-teal/10" : "border-line bg-card"
+                    }`}
+                  >
+                    <span className="block text-sm font-semibold">
+                      {p.emoji} {p.label}
+                    </span>
+                    <span className="mt-0.5 block text-xs text-muted-foreground">{p.blurb}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
+
+          <div className="mt-6 grid gap-5 sm:grid-cols-2">
+            <div>
+              <label htmlFor="faculty" className="block text-sm font-semibold">
+                Faculty
+              </label>
+              <select
+                id="faculty"
+                value={faculty}
+                onChange={(e) => setFaculty(e.target.value)}
+                className="mt-2 w-full rounded-2xl border border-line bg-card px-4 py-3 text-sm"
+              >
+                {FACULTIES.map((f) => (
+                  <option key={f} value={f}>
+                    {f}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="course" className="block text-sm font-semibold">
+                Current course or module
+              </label>
+              <input
+                id="course"
+                list="course-list"
+                value={course}
+                maxLength={60}
+                onChange={(e) => setCourse(e.target.value)}
+                placeholder="e.g. Contract Law"
+                className="mt-2 w-full rounded-2xl border border-line bg-card px-4 py-3 text-sm"
+              />
+              <datalist id="course-list">
+                {(COURSE_SUGGESTIONS[faculty] ?? []).map((c) => (
+                  <option key={c} value={c} />
+                ))}
+              </datalist>
+            </div>
+          </div>
+
+          <fieldset className="mt-6">
+            <legend className="text-sm font-semibold">When are you free on campus?</legend>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {ALL_SLOTS.map((s) => {
+                const on = slots.includes(s);
+                return (
+                  <button
+                    type="button"
+                    key={s}
+                    aria-pressed={on}
+                    onClick={() => toggleSlot(s)}
+                    className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-transform hover:-translate-y-0.5 ${
+                      on ? "border-teal bg-teal text-teal-foreground" : "border-line bg-card text-muted-foreground"
+                    }`}
+                  >
+                    {slotLabel(s)}
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
+
+          <div className="mt-6 grid gap-5 sm:grid-cols-2">
+            <div>
+              <label htmlFor="gender" className="block text-sm font-semibold">
+                Gender (optional)
+              </label>
+              <select
+                id="gender"
+                value={gender}
+                onChange={(e) => setGender(e.target.value as Gender)}
+                className="mt-2 w-full rounded-2xl border border-line bg-card px-4 py-3 text-sm"
+              >
+                {GENDERS.map((g) => (
+                  <option key={g.id} value={g.id}>
+                    {g.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="matchwith" className="block text-sm font-semibold">
+                I want to interact with
+              </label>
+              <select
+                id="matchwith"
+                value={matchWith}
+                onChange={(e) => setMatchWith(e.target.value as MatchWith)}
+                className="mt-2 w-full rounded-2xl border border-line bg-card px-4 py-3 text-sm"
+              >
+                {MATCH_WITH.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Changeable any time under Safety. Romantic or sexual solicitation is banned outright.
+              </p>
+            </div>
+          </div>
+
+          <fieldset className="mt-6">
             <legend className="text-sm font-semibold">Who can you be paired with?</legend>
             <p className="mt-1 text-xs text-muted-foreground">
               Mist is inter-campus by default — all ten universities share one pool.
