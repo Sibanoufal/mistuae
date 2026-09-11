@@ -230,9 +230,13 @@ export type Thread = {
   myRevealOffered: boolean;
   closed: boolean;
   sharedInterest: string;
+  /** 0 = fully anonymous, 1 = basics shared, 2 = names revealed. */
+  revealStage?: 0 | 1 | 2;
+  purpose?: PurposeId;
+  rated?: boolean;
 };
 
-export type BoardKind = "coffee" | "event" | "project";
+export type BoardKind = "coffee" | "event" | "project" | "study" | "society";
 
 export type BoardPost = {
   id: string;
@@ -250,13 +254,32 @@ export type BoardPost = {
   hostNote?: string;
   plan?: string[];
   interestedFrom?: University[];
+  course?: string;
+  faculty?: string;
+  slots?: string[];
 };
 
 export const BOARD_CTA: Record<BoardKind, { idle: string; joined: string; verb: string }> = {
   coffee: { idle: "Save me a seat", joined: "Seat saved — tap to give it up", verb: "sitting down" },
   event: { idle: "Be my plus one", joined: "You're the plus one — tap to bail", verb: "going" },
   project: { idle: "Join the crew", joined: "You're on the crew — tap to step off", verb: "building" },
+  study: { idle: "Study with them", joined: "You're on the table — tap to leave", verb: "studying" },
+  society: { idle: "I'm going too", joined: "You're going — tap to cancel", verb: "going" },
 };
+
+export type Room = {
+  id: string;
+  name: string;
+  emoji: string;
+  topic: string;
+  faculty: string;
+  members: number;
+  messages: Message[];
+  joined: boolean;
+};
+
+export type Rating = { alias: string; tags: string[]; at: number };
+export type Report = { alias: string; reason: string; note: string; at: number };
 
 
 type State = {
