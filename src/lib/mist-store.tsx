@@ -758,6 +758,10 @@ function loadState(): State {
       posts: parsed.posts?.length ? parsed.posts : SEED_POSTS,
       penPal: parsed.penPal ?? null,
       letters: parsed.letters ?? [],
+      rooms: parsed.rooms?.length ? parsed.rooms : SEEDED_ROOMS(),
+      blocked: parsed.blocked ?? [],
+      reports: parsed.reports ?? [],
+      ratings: parsed.ratings ?? [],
     };
   } catch {
     return EMPTY_STATE();
