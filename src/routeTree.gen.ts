@@ -17,6 +17,7 @@ import { Route as LettersRouteImport } from './routes/letters'
 import { Route as MatchRouteImport } from './routes/match'
 import { Route as ProblemSolutionRouteImport } from './routes/problem-solution'
 import { Route as RoomsRouteImport } from './routes/rooms'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ThreadsRouteImport } from './routes/threads'
 import { Route as BoardsPostIdRouteImport } from './routes/boards.$postId'
 import { Route as ChatThreadIdRouteImport } from './routes/chat.$threadId'
@@ -63,6 +64,11 @@ const RoomsRoute = RoomsRouteImport.update({
   path: '/rooms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ThreadsRoute = ThreadsRouteImport.update({
   id: '/threads',
   path: '/threads',
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/match': typeof MatchRoute
   '/problem-solution': typeof ProblemSolutionRoute
   '/rooms': typeof RoomsRouteWithChildren
+  '/settings': typeof SettingsRoute
   '/threads': typeof ThreadsRoute
   '/boards/$postId': typeof BoardsPostIdRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/letters': typeof LettersRoute
   '/match': typeof MatchRoute
   '/problem-solution': typeof ProblemSolutionRoute
+  '/settings': typeof SettingsRoute
   '/threads': typeof ThreadsRoute
   '/boards/$postId': typeof BoardsPostIdRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/match': typeof MatchRoute
   '/problem-solution': typeof ProblemSolutionRoute
   '/rooms': typeof RoomsRouteWithChildren
+  '/settings': typeof SettingsRoute
   '/threads': typeof ThreadsRoute
   '/boards/$postId': typeof BoardsPostIdRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
@@ -145,6 +154,7 @@ export interface FileRouteTypes {
     | '/match'
     | '/problem-solution'
     | '/rooms'
+    | '/settings'
     | '/threads'
     | '/boards/$postId'
     | '/chat/$threadId'
@@ -159,6 +169,7 @@ export interface FileRouteTypes {
     | '/letters'
     | '/match'
     | '/problem-solution'
+    | '/settings'
     | '/threads'
     | '/boards/$postId'
     | '/chat/$threadId'
@@ -174,6 +185,7 @@ export interface FileRouteTypes {
     | '/match'
     | '/problem-solution'
     | '/rooms'
+    | '/settings'
     | '/threads'
     | '/boards/$postId'
     | '/chat/$threadId'
@@ -190,6 +202,7 @@ export interface RootRouteChildren {
   MatchRoute: typeof MatchRoute
   ProblemSolutionRoute: typeof ProblemSolutionRoute
   RoomsRoute: typeof RoomsRouteWithChildren
+  SettingsRoute: typeof SettingsRoute
   ThreadsRoute: typeof ThreadsRoute
   ChatThreadIdRoute: typeof ChatThreadIdRoute
 }
@@ -250,6 +263,13 @@ declare module '@tanstack/react-router' {
       path: '/rooms'
       fullPath: '/rooms'
       preLoaderRoute: typeof RoomsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/threads': {
@@ -322,6 +342,7 @@ const rootRouteChildren: RootRouteChildren = {
   MatchRoute: MatchRoute,
   ProblemSolutionRoute: ProblemSolutionRoute,
   RoomsRoute: RoomsRouteWithChildren,
+  SettingsRoute: SettingsRoute,
   ThreadsRoute: ThreadsRoute,
   ChatThreadIdRoute: ChatThreadIdRoute,
 }
