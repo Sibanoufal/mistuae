@@ -289,9 +289,30 @@ type State = {
   posts: BoardPost[];
   penPal: PenPal | null;
   letters: Letter[];
+  rooms: Room[];
+  blocked: string[];
+  reports: Report[];
+  ratings: Rating[];
 };
 
-const STORAGE_KEY = "mist.state.v3";
+const STORAGE_KEY = "mist.state.v4";
+
+const SEEDED_ROOMS = (): Room[] =>
+  SEED_ROOMS.map((r) => ({
+    id: r.id,
+    name: r.name,
+    emoji: r.emoji,
+    topic: r.topic,
+    faculty: r.faculty,
+    members: r.members,
+    joined: false,
+    messages: r.seed.map(([author, text], i) => ({
+      id: `${r.id}-${i}`,
+      author,
+      text,
+      at: Date.now() - (r.seed.length - i) * 7 * 60 * 1000,
+    })),
+  }));
 
 const EMPTY_STATE = (): State => ({
   profile: null,
@@ -299,6 +320,10 @@ const EMPTY_STATE = (): State => ({
   posts: SEED_POSTS,
   penPal: null,
   letters: [],
+  rooms: SEEDED_ROOMS(),
+  blocked: [],
+  reports: [],
+  ratings: [],
 });
 
 const ADJECTIVES = [
