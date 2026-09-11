@@ -971,7 +971,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const createThread = useCallback<Ctx["createThread"]>(
-    ({ mode, duration, sharedInterest, partner }) => {
+    ({ mode, duration, sharedInterest, partner, purpose, groupSize }) => {
       const me: Member = {
         alias: state.profile?.alias ?? randomAlias(),
         university: state.profile?.university ?? UNIVERSITIES[0],
