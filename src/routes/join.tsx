@@ -61,7 +61,7 @@ function Join() {
   const [course, setCourse] = useState(profile?.course ?? "");
   const [purposes, setPurposes] = useState<PurposeId[]>(profile?.purposes ?? []);
   const [slots, setSlots] = useState<string[]>(profile?.slots ?? []);
-  const [gender, setGender] = useState<Gender>(profile?.gender ?? "prefer-not-to-say");
+  const [gender, setGender] = useState<Gender>(profile?.gender ?? "undisclosed");
   const [matchWith, setMatchWith] = useState<MatchWith>(profile?.matchWith ?? "everyone");
 
   useEffect(() => {
