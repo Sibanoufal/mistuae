@@ -106,6 +106,10 @@ function Join() {
       setError("Pick at least one interest so we can match you with someone you'd click with.");
       return;
     }
+    if (purposes.length === 0) {
+      setError("Pick at least one reason you're here — that's what matching runs on.");
+      return;
+    }
     setError(null);
     saveProfile({
       alias,
@@ -117,6 +121,13 @@ function Join() {
       realName: realName.trim().slice(0, 40),
       crossCampusOnly: campusPref === "cross",
       campusPref,
+      faculty,
+      course: course.trim().slice(0, 60),
+      purposes,
+      slots,
+      gender,
+      matchWith,
+      discoverable: true,
     });
     setSealed(true);
     window.setTimeout(() => navigate({ to: "/letters" }), 1900);
