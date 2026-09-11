@@ -86,6 +86,14 @@ function Join() {
     reader.readAsDataURL(file);
   }
 
+  function togglePurpose(p: PurposeId) {
+    setPurposes((prev) => (prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p]));
+  }
+
+  function toggleSlot(s: string) {
+    setSlots((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
+  }
+
   function toggleInterest(i: string) {
     setInterests((prev) =>
       prev.includes(i) ? prev.filter((x) => x !== i) : prev.length >= 5 ? prev : [...prev, i],
