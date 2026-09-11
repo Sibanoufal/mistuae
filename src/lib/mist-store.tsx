@@ -1172,6 +1172,123 @@ export function MistProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  /** Gradual reveal: anonymous → basics (campus, course, year) → names. */
+  const advanceReveal = useCallback<Ctx["advanceReveal"]>((threadId) => {
+    setState((s) => ({
+      ...s,
+      threads: s.threads.map((t) => {
+        if (t.id !== threadId) return t;
+        const stage = (t.revealStage ?? 0) as 0 | 1 | 2;
+        if (stage >= 2) return t;
+        const next = (stage + 1) as 1 | 2;
+        const other = t.members.find((m) => !m.isMe);
+        return {
+          ...t,
+          revealStage: next,
+          members:
+            next === 2 ? t.members.map((m) => ({ ...m, revealed: true })) : t.members,
+          myRevealOffered: next === 2 ? true : t.myRevealOffered,
+          messages: [
+            ...t.messages,
+            {
+              id: uid(),
+              author: "system",
+              system: true,
+              at: Date.now(),
+              text:
+                next === 1
+                  ? "Step 2 of 3 — you both shared basics: campus, course and year. Still no names."
+                  : `Step 3 of 3 — masks off. ${other ? `Say hi to ${other.revealedName}.` : ""}`,
+            },
+          ],
+        };
+      }),
+    }));
+  }, []);
+
+  const rateInteraction = useCallback<Ctx["rateInteraction"]>((threadId, alias, tags) => {
+    if (!tags.length) return;
+    setState((s) => ({
+      ...s,
+      ratings: [{ alias, tags, at: Date.now() }, ...s.ratings],
+      threads: s.threads.map((t) => (t.id === threadId ? { ...t, rated: true } : t)),
+    }));
+  }, []);
+
+  const sendRoomMessage = useCallback<Ctx["sendRoomMessage"]>((roomId, text) => {
+    const trimmed = text.trim().slice(0, 500);
+    if (!trimmed) return;
+    setState((s) => ({
+      ...s,
+      rooms: s.rooms.map((r) =>
+        r.id === roomId
+          ? { ...r, messages: [...r.messages, { id: uid(), author: "me", text: trimmed, at: Date.now() }] }
+          : r,
+      ),
+    }));
+    window.setTimeout(
+      () =>
+        setState((s) => ({
+          ...s,
+          rooms: s.rooms.map((r) => {
+            if (r.id !== roomId) return r;
+            const speakers = r.messages.filter((m) => m.author !== "me").map((m) => m.author);
+            const who = speakers[Math.floor(Math.random() * speakers.length)] ?? randomAlias();
+            if (s.blocked.includes(who)) return r;
+            return {
+              ...r,
+              messages: [
+                ...r.messages,
+                {
+                  id: uid(),
+                  author: who,
+                  text: ROOM_REPLIES[Math.floor(Math.random() * ROOM_REPLIES.length)]!,
+                  at: Date.now(),
+                },
+              ],
+            };
+          }),
+        })),
+      1400 + Math.random() * 1600,
+    );
+  }, []);
+
+  const toggleRoom = useCallback<Ctx["toggleRoom"]>((roomId) => {
+    setState((s) => ({
+      ...s,
+      rooms: s.rooms.map((r) =>
+        r.id === roomId
+          ? { ...r, joined: !r.joined, members: r.members + (r.joined ? -1 : 1) }
+          : r,
+      ),
+    }));
+  }, []);
+
+  const blockAlias = useCallback<Ctx["blockAlias"]>((alias) => {
+    setState((s) => ({
+      ...s,
+      blocked: s.blocked.includes(alias) ? s.blocked : [alias, ...s.blocked],
+      threads: s.threads.map((t) =>
+        t.members.some((m) => m.alias === alias) ? { ...t, closed: true } : t,
+      ),
+    }));
+  }, []);
+
+  const unblockAlias = useCallback<Ctx["unblockAlias"]>((alias) => {
+    setState((s) => ({ ...s, blocked: s.blocked.filter((a) => a !== alias) }));
+  }, []);
+
+  const reportAlias = useCallback<Ctx["reportAlias"]>((alias, reason, note) => {
+    setState((s) => ({
+      ...s,
+      reports: [{ alias, reason, note: note.trim().slice(0, 500), at: Date.now() }, ...s.reports],
+    }));
+  }, []);
+
+  const setDiscoverable = useCallback<Ctx["setDiscoverable"]>((on) => {
+    setState((s) => (s.profile ? { ...s, profile: { ...s.profile, discoverable: on } } : s));
+  }, []);
+
   const value = useMemo<Ctx>(
     () => ({
       ready,
@@ -1180,6 +1297,18 @@ export function MistProvider({ children }: { children: ReactNode }) {
       posts: state.posts,
       penPal: state.penPal,
       letters: state.letters,
+      rooms: state.rooms,
+      blocked: state.blocked,
+      reports: state.reports,
+      ratings: state.ratings,
+      advanceReveal,
+      rateInteraction,
+      sendRoomMessage,
+      toggleRoom,
+      blockAlias,
+      unblockAlias,
+      reportAlias,
+      setDiscoverable,
       saveProfile,
       signOut,
       createThread,
