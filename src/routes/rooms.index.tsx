@@ -104,8 +104,8 @@ function Rooms() {
         <h2 className="text-lg font-bold">House rules in every room</h2>
         <ul className="mt-3 grid gap-2 text-sm text-muted-foreground sm:grid-cols-2">
           {COMMUNITY_RULES.map((rule) => (
-            <li key={rule} className="rounded-2xl bg-ink/5 px-3 py-2">
-              ◆ {rule}
+            <li key={rule.title} className="rounded-2xl bg-ink/5 px-3 py-2">
+              <strong className="text-ink">◆ {rule.title}</strong> — {rule.body}
             </li>
           ))}
         </ul>
