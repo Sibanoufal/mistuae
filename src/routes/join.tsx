@@ -57,6 +57,12 @@ function Join() {
   );
   const [alias, setAlias] = useState("");
   const [sealed, setSealed] = useState(false);
+  const [faculty, setFaculty] = useState<string>(profile?.faculty ?? FACULTIES[0]);
+  const [course, setCourse] = useState(profile?.course ?? "");
+  const [purposes, setPurposes] = useState<PurposeId[]>(profile?.purposes ?? []);
+  const [slots, setSlots] = useState<string[]>(profile?.slots ?? []);
+  const [gender, setGender] = useState<Gender>(profile?.gender ?? "prefer-not-to-say");
+  const [matchWith, setMatchWith] = useState<MatchWith>(profile?.matchWith ?? "everyone");
 
   useEffect(() => {
     setAlias((current) => current || profile?.alias || randomAlias());
