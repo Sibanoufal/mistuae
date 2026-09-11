@@ -168,6 +168,17 @@ export type Profile = {
   crossCampusOnly: boolean;
   campusPref?: CampusPref;
   reducedMotion?: boolean;
+  /** Faculty → course → year is how campus-only communities are grouped. */
+  faculty?: string;
+  course?: string;
+  /** Why you're here: study partner, project partner, coffee, networking, society. */
+  purposes?: PurposeId[];
+  /** Availability slots like "Tue-pm". */
+  slots?: string[];
+  gender?: Gender;
+  matchWith?: MatchWith;
+  /** Off = you disappear from discovery, rooms lists and recommendations. */
+  discoverable?: boolean;
 };
 
 export type SealColor = "coral" | "teal" | "lilac" | "butter";
