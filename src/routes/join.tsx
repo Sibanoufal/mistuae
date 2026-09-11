@@ -11,6 +11,18 @@ import {
   type CampusPref,
   type University,
 } from "@/lib/mist-store";
+import {
+  ALL_SLOTS,
+  COURSE_SUGGESTIONS,
+  FACULTIES,
+  GENDERS,
+  MATCH_WITH,
+  PURPOSES,
+  slotLabel,
+  type Gender,
+  type MatchWith,
+  type PurposeId,
+} from "@/lib/mist-social";
 
 export const Route = createFileRoute("/join")({
   head: () => ({
