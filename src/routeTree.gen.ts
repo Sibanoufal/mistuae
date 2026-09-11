@@ -20,6 +20,8 @@ import { Route as RoomsRouteImport } from './routes/rooms'
 import { Route as ThreadsRouteImport } from './routes/threads'
 import { Route as BoardsPostIdRouteImport } from './routes/boards.$postId'
 import { Route as ChatThreadIdRouteImport } from './routes/chat.$threadId'
+import { Route as RoomsIndexRouteImport } from './routes/rooms.index'
+import { Route as RoomsRoomIdRouteImport } from './routes/rooms.$roomId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -76,6 +78,16 @@ const ChatThreadIdRoute = ChatThreadIdRouteImport.update({
   path: '/chat/$threadId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RoomsIndexRoute = RoomsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RoomsRoute,
+} as any)
+const RoomsRoomIdRoute = RoomsRoomIdRouteImport.update({
+  id: '/$roomId',
+  path: '/$roomId',
+  getParentRoute: () => RoomsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -85,10 +97,12 @@ export interface FileRoutesByFullPath {
   '/letters': typeof LettersRoute
   '/match': typeof MatchRoute
   '/problem-solution': typeof ProblemSolutionRoute
-  '/rooms': typeof RoomsRoute
+  '/rooms': typeof RoomsRouteWithChildren
   '/threads': typeof ThreadsRoute
   '/boards/$postId': typeof BoardsPostIdRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
+  '/rooms/$roomId': typeof RoomsRoomIdRoute
+  '/rooms/': typeof RoomsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -98,10 +112,11 @@ export interface FileRoutesByTo {
   '/letters': typeof LettersRoute
   '/match': typeof MatchRoute
   '/problem-solution': typeof ProblemSolutionRoute
-  '/rooms': typeof RoomsRoute
   '/threads': typeof ThreadsRoute
   '/boards/$postId': typeof BoardsPostIdRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
+  '/rooms/$roomId': typeof RoomsRoomIdRoute
+  '/rooms': typeof RoomsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -112,10 +127,12 @@ export interface FileRoutesById {
   '/letters': typeof LettersRoute
   '/match': typeof MatchRoute
   '/problem-solution': typeof ProblemSolutionRoute
-  '/rooms': typeof RoomsRoute
+  '/rooms': typeof RoomsRouteWithChildren
   '/threads': typeof ThreadsRoute
   '/boards/$postId': typeof BoardsPostIdRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
+  '/rooms/$roomId': typeof RoomsRoomIdRoute
+  '/rooms/': typeof RoomsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -131,6 +148,8 @@ export interface FileRouteTypes {
     | '/threads'
     | '/boards/$postId'
     | '/chat/$threadId'
+    | '/rooms/$roomId'
+    | '/rooms/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -140,10 +159,11 @@ export interface FileRouteTypes {
     | '/letters'
     | '/match'
     | '/problem-solution'
-    | '/rooms'
     | '/threads'
     | '/boards/$postId'
     | '/chat/$threadId'
+    | '/rooms/$roomId'
+    | '/rooms'
   id:
     | '__root__'
     | '/'
@@ -157,6 +177,8 @@ export interface FileRouteTypes {
     | '/threads'
     | '/boards/$postId'
     | '/chat/$threadId'
+    | '/rooms/$roomId'
+    | '/rooms/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -167,7 +189,7 @@ export interface RootRouteChildren {
   LettersRoute: typeof LettersRoute
   MatchRoute: typeof MatchRoute
   ProblemSolutionRoute: typeof ProblemSolutionRoute
-  RoomsRoute: typeof RoomsRoute
+  RoomsRoute: typeof RoomsRouteWithChildren
   ThreadsRoute: typeof ThreadsRoute
   ChatThreadIdRoute: typeof ChatThreadIdRoute
 }
@@ -251,6 +273,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChatThreadIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/rooms/': {
+      id: '/rooms/'
+      path: '/'
+      fullPath: '/rooms/'
+      preLoaderRoute: typeof RoomsIndexRouteImport
+      parentRoute: typeof RoomsRoute
+    }
+    '/rooms/$roomId': {
+      id: '/rooms/$roomId'
+      path: '/$roomId'
+      fullPath: '/rooms/$roomId'
+      preLoaderRoute: typeof RoomsRoomIdRouteImport
+      parentRoute: typeof RoomsRoute
+    }
   }
 }
 
@@ -265,6 +301,18 @@ const BoardsRouteChildren: BoardsRouteChildren = {
 const BoardsRouteWithChildren =
   BoardsRoute._addFileChildren(BoardsRouteChildren)
 
+interface RoomsRouteChildren {
+  RoomsRoomIdRoute: typeof RoomsRoomIdRoute
+  RoomsIndexRoute: typeof RoomsIndexRoute
+}
+
+const RoomsRouteChildren: RoomsRouteChildren = {
+  RoomsRoomIdRoute: RoomsRoomIdRoute,
+  RoomsIndexRoute: RoomsIndexRoute,
+}
+
+const RoomsRouteWithChildren = RoomsRoute._addFileChildren(RoomsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BoardsRoute: BoardsRouteWithChildren,
@@ -273,7 +321,7 @@ const rootRouteChildren: RootRouteChildren = {
   LettersRoute: LettersRoute,
   MatchRoute: MatchRoute,
   ProblemSolutionRoute: ProblemSolutionRoute,
-  RoomsRoute: RoomsRoute,
+  RoomsRoute: RoomsRouteWithChildren,
   ThreadsRoute: ThreadsRoute,
   ChatThreadIdRoute: ChatThreadIdRoute,
 }
