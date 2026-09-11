@@ -11,10 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BoardsRouteImport } from './routes/boards'
+import { Route as DiscoverRouteImport } from './routes/discover'
 import { Route as JoinRouteImport } from './routes/join'
 import { Route as LettersRouteImport } from './routes/letters'
 import { Route as MatchRouteImport } from './routes/match'
 import { Route as ProblemSolutionRouteImport } from './routes/problem-solution'
+import { Route as RoomsRouteImport } from './routes/rooms'
 import { Route as ThreadsRouteImport } from './routes/threads'
 import { Route as BoardsPostIdRouteImport } from './routes/boards.$postId'
 import { Route as ChatThreadIdRouteImport } from './routes/chat.$threadId'
@@ -27,6 +29,11 @@ const IndexRoute = IndexRouteImport.update({
 const BoardsRoute = BoardsRouteImport.update({
   id: '/boards',
   path: '/boards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiscoverRoute = DiscoverRouteImport.update({
+  id: '/discover',
+  path: '/discover',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JoinRoute = JoinRouteImport.update({
@@ -49,6 +56,11 @@ const ProblemSolutionRoute = ProblemSolutionRouteImport.update({
   path: '/problem-solution',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RoomsRoute = RoomsRouteImport.update({
+  id: '/rooms',
+  path: '/rooms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ThreadsRoute = ThreadsRouteImport.update({
   id: '/threads',
   path: '/threads',
@@ -68,10 +80,12 @@ const ChatThreadIdRoute = ChatThreadIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/boards': typeof BoardsRouteWithChildren
+  '/discover': typeof DiscoverRoute
   '/join': typeof JoinRoute
   '/letters': typeof LettersRoute
   '/match': typeof MatchRoute
   '/problem-solution': typeof ProblemSolutionRoute
+  '/rooms': typeof RoomsRoute
   '/threads': typeof ThreadsRoute
   '/boards/$postId': typeof BoardsPostIdRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
@@ -79,10 +93,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/boards': typeof BoardsRouteWithChildren
+  '/discover': typeof DiscoverRoute
   '/join': typeof JoinRoute
   '/letters': typeof LettersRoute
   '/match': typeof MatchRoute
   '/problem-solution': typeof ProblemSolutionRoute
+  '/rooms': typeof RoomsRoute
   '/threads': typeof ThreadsRoute
   '/boards/$postId': typeof BoardsPostIdRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
@@ -91,10 +107,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/boards': typeof BoardsRouteWithChildren
+  '/discover': typeof DiscoverRoute
   '/join': typeof JoinRoute
   '/letters': typeof LettersRoute
   '/match': typeof MatchRoute
   '/problem-solution': typeof ProblemSolutionRoute
+  '/rooms': typeof RoomsRoute
   '/threads': typeof ThreadsRoute
   '/boards/$postId': typeof BoardsPostIdRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
@@ -104,10 +122,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/boards'
+    | '/discover'
     | '/join'
     | '/letters'
     | '/match'
     | '/problem-solution'
+    | '/rooms'
     | '/threads'
     | '/boards/$postId'
     | '/chat/$threadId'
@@ -115,10 +135,12 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/boards'
+    | '/discover'
     | '/join'
     | '/letters'
     | '/match'
     | '/problem-solution'
+    | '/rooms'
     | '/threads'
     | '/boards/$postId'
     | '/chat/$threadId'
@@ -126,10 +148,12 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/boards'
+    | '/discover'
     | '/join'
     | '/letters'
     | '/match'
     | '/problem-solution'
+    | '/rooms'
     | '/threads'
     | '/boards/$postId'
     | '/chat/$threadId'
@@ -138,10 +162,12 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BoardsRoute: typeof BoardsRouteWithChildren
+  DiscoverRoute: typeof DiscoverRoute
   JoinRoute: typeof JoinRoute
   LettersRoute: typeof LettersRoute
   MatchRoute: typeof MatchRoute
   ProblemSolutionRoute: typeof ProblemSolutionRoute
+  RoomsRoute: typeof RoomsRoute
   ThreadsRoute: typeof ThreadsRoute
   ChatThreadIdRoute: typeof ChatThreadIdRoute
 }
@@ -160,6 +186,13 @@ declare module '@tanstack/react-router' {
       path: '/boards'
       fullPath: '/boards'
       preLoaderRoute: typeof BoardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/discover': {
+      id: '/discover'
+      path: '/discover'
+      fullPath: '/discover'
+      preLoaderRoute: typeof DiscoverRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/join': {
@@ -188,6 +221,13 @@ declare module '@tanstack/react-router' {
       path: '/problem-solution'
       fullPath: '/problem-solution'
       preLoaderRoute: typeof ProblemSolutionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rooms': {
+      id: '/rooms'
+      path: '/rooms'
+      fullPath: '/rooms'
+      preLoaderRoute: typeof RoomsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/threads': {
@@ -228,10 +268,12 @@ const BoardsRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BoardsRoute: BoardsRouteWithChildren,
+  DiscoverRoute: DiscoverRoute,
   JoinRoute: JoinRoute,
   LettersRoute: LettersRoute,
   MatchRoute: MatchRoute,
   ProblemSolutionRoute: ProblemSolutionRoute,
+  RoomsRoute: RoomsRoute,
   ThreadsRoute: ThreadsRoute,
   ChatThreadIdRoute: ChatThreadIdRoute,
 }
