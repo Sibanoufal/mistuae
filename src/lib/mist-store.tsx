@@ -1341,6 +1341,14 @@ export function MistProvider({ children }: { children: ReactNode }) {
       markLetterRead,
       proposeGreatReveal,
       skipADay,
+      advanceReveal,
+      rateInteraction,
+      sendRoomMessage,
+      toggleRoom,
+      blockAlias,
+      unblockAlias,
+      reportAlias,
+      setDiscoverable,
     ],
   );
 
