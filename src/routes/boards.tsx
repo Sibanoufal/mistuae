@@ -35,9 +35,11 @@ const KIND_META: Record<BoardKind, { label: string; icon: string; chip: string; 
   coffee: { label: "Coffee chat", icon: "☕", chip: "bg-butter text-butter-foreground", tint: "bg-butter/40" },
   event: { label: "Event partner", icon: "✦", chip: "bg-mint text-ink", tint: "bg-mint/50" },
   project: { label: "Project collab", icon: "◎", chip: "bg-lilac/30 text-plum", tint: "bg-lilac/20" },
+  study: { label: "Course & study", icon: "📚", chip: "bg-sky/30 text-ink", tint: "bg-sky/20" },
+  society: { label: "Society event", icon: "🎟️", chip: "bg-coral/25 text-plum", tint: "bg-coral/15" },
 };
 
-const FILTERS: (BoardKind | "all")[] = ["all", "coffee", "event", "project"];
+const FILTERS: (BoardKind | "all")[] = ["all", "coffee", "event", "project", "study", "society"];
 
 const AREAS = ["All areas", "Dubai International Academic City", "Dubai Knowledge Park", "Dubai Silicon Oasis", "University City, Sharjah"];
 

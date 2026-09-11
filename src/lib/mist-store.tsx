@@ -7,6 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { SEED_PEOPLE, SEED_ROOMS, type Gender, type MatchWith, type PurposeId } from "./mist-social";
 
 export const UNIVERSITIES = [
   "RIT Dubai",
@@ -168,6 +169,17 @@ export type Profile = {
   crossCampusOnly: boolean;
   campusPref?: CampusPref;
   reducedMotion?: boolean;
+  /** Faculty → course → year is how campus-only communities are grouped. */
+  faculty?: string;
+  course?: string;
+  /** Why you're here: study partner, project partner, coffee, networking, society. */
+  purposes?: PurposeId[];
+  /** Availability slots like "Tue-pm". */
+  slots?: string[];
+  gender?: Gender;
+  matchWith?: MatchWith;
+  /** Off = you disappear from discovery, rooms lists and recommendations. */
+  discoverable?: boolean;
 };
 
 export type SealColor = "coral" | "teal" | "lilac" | "butter";
@@ -219,9 +231,13 @@ export type Thread = {
   myRevealOffered: boolean;
   closed: boolean;
   sharedInterest: string;
+  /** 0 = fully anonymous, 1 = basics shared, 2 = names revealed. */
+  revealStage?: 0 | 1 | 2;
+  purpose?: PurposeId;
+  rated?: boolean;
 };
 
-export type BoardKind = "coffee" | "event" | "project";
+export type BoardKind = "coffee" | "event" | "project" | "study" | "society";
 
 export type BoardPost = {
   id: string;
@@ -239,13 +255,32 @@ export type BoardPost = {
   hostNote?: string;
   plan?: string[];
   interestedFrom?: University[];
+  course?: string;
+  faculty?: string;
+  slots?: string[];
 };
 
 export const BOARD_CTA: Record<BoardKind, { idle: string; joined: string; verb: string }> = {
   coffee: { idle: "Save me a seat", joined: "Seat saved — tap to give it up", verb: "sitting down" },
   event: { idle: "Be my plus one", joined: "You're the plus one — tap to bail", verb: "going" },
   project: { idle: "Join the crew", joined: "You're on the crew — tap to step off", verb: "building" },
+  study: { idle: "Study with them", joined: "You're on the table — tap to leave", verb: "studying" },
+  society: { idle: "I'm going too", joined: "You're going — tap to cancel", verb: "going" },
 };
+
+export type Room = {
+  id: string;
+  name: string;
+  emoji: string;
+  topic: string;
+  faculty: string;
+  members: number;
+  messages: Message[];
+  joined: boolean;
+};
+
+export type Rating = { alias: string; tags: string[]; at: number };
+export type Report = { alias: string; reason: string; note: string; at: number };
 
 
 type State = {
@@ -254,9 +289,30 @@ type State = {
   posts: BoardPost[];
   penPal: PenPal | null;
   letters: Letter[];
+  rooms: Room[];
+  blocked: string[];
+  reports: Report[];
+  ratings: Rating[];
 };
 
-const STORAGE_KEY = "mist.state.v3";
+const STORAGE_KEY = "mist.state.v4";
+
+const SEEDED_ROOMS = (): Room[] =>
+  SEED_ROOMS.map((r) => ({
+    id: r.id,
+    name: r.name,
+    emoji: r.emoji,
+    topic: r.topic,
+    faculty: r.faculty,
+    members: r.members,
+    joined: false,
+    messages: r.seed.map(([author, text], i) => ({
+      id: `${r.id}-${i}`,
+      author,
+      text,
+      at: Date.now() - (r.seed.length - i) * 7 * 60 * 1000,
+    })),
+  }));
 
 const EMPTY_STATE = (): State => ({
   profile: null,
@@ -264,6 +320,10 @@ const EMPTY_STATE = (): State => ({
   posts: SEED_POSTS,
   penPal: null,
   letters: [],
+  rooms: SEEDED_ROOMS(),
+  blocked: [],
+  reports: [],
+  ratings: [],
 });
 
 const ADJECTIVES = [
@@ -563,6 +623,100 @@ const SEED_POSTS: BoardPost[] = [
       "Middlesex University Dubai",
     ],
   },
+  {
+    id: "p13",
+    kind: "study",
+    emoji: "📚",
+    title: "Anyone taking Contract Law this semester?",
+    body: "Heriot-Watt, but I don't care which uni you're at — the cases are the same. Three people, one hour, Thursdays. We read, we argue, we leave.",
+    university: "Heriot-Watt University Dubai",
+    when: "Thu 2–4 PM · Knowledge Park library",
+    alias: "Ivory Wren",
+    responses: 9,
+    joined: false,
+    spots: 2,
+    course: "Contract Law",
+    faculty: "Law",
+    slots: ["Thu-pm"],
+    hostNote: "Ran the same table last semester · everyone passed",
+    plan: [
+      "We each summarise two cases before we sit down.",
+      "One hour, no phones, aliases only.",
+      "If it works we repeat it every Thursday until finals.",
+    ],
+    interestedFrom: ["University of Sharjah", "Middlesex University Dubai"],
+  },
+  {
+    id: "p14",
+    kind: "study",
+    emoji: "🧮",
+    title: "Need 1 person for a marketing project (data is already done)",
+    body: "MDX, second year. I surveyed 60 commuters and have a spreadsheet nobody has opinions about. Bring opinions. That's the whole job description.",
+    university: "Middlesex University Dubai",
+    when: "Two evenings a week · starts Monday",
+    alias: "Amber Falcon",
+    responses: 6,
+    joined: false,
+    spots: 1,
+    course: "Marketing Principles",
+    faculty: "Business & Management",
+    slots: ["Tue-pm", "Wed-pm"],
+    hostNote: "Marked 'reliable collaborator' by 4 people",
+    plan: [
+      "Scope it over messages first — no meetings in week one.",
+      "One call, still masked.",
+      "Names go on the submission, so we unmask together before the deadline.",
+    ],
+    interestedFrom: ["Amity University Dubai", "RIT Dubai"],
+  },
+  {
+    id: "p15",
+    kind: "society",
+    emoji: "🎟️",
+    title: "AI Society open night — say you're going, find others going",
+    body: "Posted by the BITS AI Society. Anonymous RSVPs: you'll see how many students from each campus are coming without anyone seeing who you are.",
+    university: "BITS Pilani Dubai",
+    when: "Tue 6:00 PM · Academic City, block 3 auditorium",
+    alias: "BITS AI Society",
+    responses: 38,
+    joined: false,
+    spots: 40,
+    faculty: "Computer Science & IT",
+    slots: ["Tue-eve"],
+    hostNote: "Verified society account · open to all ten campuses",
+    plan: [
+      "RSVP anonymously — we only publish campus counts.",
+      "Talks 6–7, open floor after.",
+      "There's a masked meet-up corner for people who came alone.",
+    ],
+    interestedFrom: [
+      "Manipal Academy of Higher Education Dubai",
+      "Amity University Dubai",
+      "RIT Dubai",
+    ],
+  },
+  {
+    id: "p16",
+    kind: "society",
+    emoji: "🌱",
+    title: "Sustainability Society beach clean — bring nobody, meet everybody",
+    body: "UOWD society post. Half the people who come every month arrive alone. Tick 'going' and you'll be put in a masked group chat with the others who did.",
+    university: "University of Wollongong in Dubai",
+    when: "Sat 7:30 AM · Umm Suqeim beach",
+    alias: "UOWD Sustainability Society",
+    responses: 52,
+    joined: false,
+    spots: 60,
+    faculty: "Everyone",
+    slots: ["Sat-am"],
+    hostNote: "Verified society account · transport from Knowledge Park",
+    plan: [
+      "Meet at the Knowledge Park gate at 7 AM for the shared bus.",
+      "Two hours, gloves and bags provided.",
+      "Breakfast after — that's where people actually talk.",
+    ],
+    interestedFrom: ["Heriot-Watt University Dubai", "Murdoch University Dubai"],
+  },
 ];
 
 
@@ -604,6 +758,10 @@ function loadState(): State {
       posts: parsed.posts?.length ? parsed.posts : SEED_POSTS,
       penPal: parsed.penPal ?? null,
       letters: parsed.letters ?? [],
+      rooms: parsed.rooms?.length ? parsed.rooms : SEEDED_ROOMS(),
+      blocked: parsed.blocked ?? [],
+      reports: parsed.reports ?? [],
+      ratings: parsed.ratings ?? [],
     };
   } catch {
     return EMPTY_STATE();
@@ -638,12 +796,26 @@ type Ctx = {
   letters: Letter[];
   saveProfile: (p: Profile) => void;
   signOut: () => void;
+  rooms: Room[];
+  blocked: string[];
+  reports: Report[];
+  ratings: Rating[];
   createThread: (opts: {
     mode: ChatMode;
     duration: ChatDuration;
     sharedInterest: string;
     partner?: { alias: string; university: University };
+    purpose?: PurposeId;
+    groupSize?: number;
   }) => Thread;
+  advanceReveal: (threadId: string) => void;
+  rateInteraction: (threadId: string, alias: string, tags: string[]) => void;
+  sendRoomMessage: (roomId: string, text: string) => void;
+  toggleRoom: (roomId: string) => void;
+  blockAlias: (alias: string) => void;
+  unblockAlias: (alias: string) => void;
+  reportAlias: (alias: string, reason: string, note: string) => void;
+  setDiscoverable: (on: boolean) => void;
   sendMessage: (threadId: string, text: string) => void;
   offerReveal: (threadId: string) => void;
   extendThread: (threadId: string) => void;
@@ -799,7 +971,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const createThread = useCallback<Ctx["createThread"]>(
-    ({ mode, duration, sharedInterest, partner }) => {
+    ({ mode, duration, sharedInterest, partner, purpose, groupSize }) => {
       const me: Member = {
         alias: state.profile?.alias ?? randomAlias(),
         university: state.profile?.university ?? UNIVERSITIES[0],
@@ -807,7 +979,8 @@ export function MistProvider({ children }: { children: ReactNode }) {
         revealed: false,
         isMe: true,
       };
-      const otherCount = mode === "pair" ? 1 : 2 + Math.floor(Math.random() * 2);
+      const otherCount =
+        mode === "pair" ? 1 : Math.max(2, Math.min(4, (groupSize ?? 4) - 1));
       const pool = campusPool(state.profile);
       const others: Member[] = Array.from({ length: otherCount }, (_, i) => ({
         alias: i === 0 && partner ? partner.alias : randomAlias(),
@@ -831,6 +1004,8 @@ export function MistProvider({ children }: { children: ReactNode }) {
         sharedInterest,
         myRevealOffered: false,
         closed: false,
+        revealStage: 0,
+        ...(purpose ? { purpose } : {}),
         messages: [
           {
             id: uid(),
@@ -997,6 +1172,123 @@ export function MistProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  /** Gradual reveal: anonymous → basics (campus, course, year) → names. */
+  const advanceReveal = useCallback<Ctx["advanceReveal"]>((threadId) => {
+    setState((s) => ({
+      ...s,
+      threads: s.threads.map((t) => {
+        if (t.id !== threadId) return t;
+        const stage = (t.revealStage ?? 0) as 0 | 1 | 2;
+        if (stage >= 2) return t;
+        const next = (stage + 1) as 1 | 2;
+        const other = t.members.find((m) => !m.isMe);
+        return {
+          ...t,
+          revealStage: next,
+          members:
+            next === 2 ? t.members.map((m) => ({ ...m, revealed: true })) : t.members,
+          myRevealOffered: next === 2 ? true : t.myRevealOffered,
+          messages: [
+            ...t.messages,
+            {
+              id: uid(),
+              author: "system",
+              system: true,
+              at: Date.now(),
+              text:
+                next === 1
+                  ? "Step 2 of 3 — you both shared basics: campus, course and year. Still no names."
+                  : `Step 3 of 3 — masks off. ${other ? `Say hi to ${other.revealedName}.` : ""}`,
+            },
+          ],
+        };
+      }),
+    }));
+  }, []);
+
+  const rateInteraction = useCallback<Ctx["rateInteraction"]>((threadId, alias, tags) => {
+    if (!tags.length) return;
+    setState((s) => ({
+      ...s,
+      ratings: [{ alias, tags, at: Date.now() }, ...s.ratings],
+      threads: s.threads.map((t) => (t.id === threadId ? { ...t, rated: true } : t)),
+    }));
+  }, []);
+
+  const sendRoomMessage = useCallback<Ctx["sendRoomMessage"]>((roomId, text) => {
+    const trimmed = text.trim().slice(0, 500);
+    if (!trimmed) return;
+    setState((s) => ({
+      ...s,
+      rooms: s.rooms.map((r) =>
+        r.id === roomId
+          ? { ...r, messages: [...r.messages, { id: uid(), author: "me", text: trimmed, at: Date.now() }] }
+          : r,
+      ),
+    }));
+    window.setTimeout(
+      () =>
+        setState((s) => ({
+          ...s,
+          rooms: s.rooms.map((r) => {
+            if (r.id !== roomId) return r;
+            const speakers = r.messages.filter((m) => m.author !== "me").map((m) => m.author);
+            const who = speakers[Math.floor(Math.random() * speakers.length)] ?? randomAlias();
+            if (s.blocked.includes(who)) return r;
+            return {
+              ...r,
+              messages: [
+                ...r.messages,
+                {
+                  id: uid(),
+                  author: who,
+                  text: ROOM_REPLIES[Math.floor(Math.random() * ROOM_REPLIES.length)]!,
+                  at: Date.now(),
+                },
+              ],
+            };
+          }),
+        })),
+      1400 + Math.random() * 1600,
+    );
+  }, []);
+
+  const toggleRoom = useCallback<Ctx["toggleRoom"]>((roomId) => {
+    setState((s) => ({
+      ...s,
+      rooms: s.rooms.map((r) =>
+        r.id === roomId
+          ? { ...r, joined: !r.joined, members: r.members + (r.joined ? -1 : 1) }
+          : r,
+      ),
+    }));
+  }, []);
+
+  const blockAlias = useCallback<Ctx["blockAlias"]>((alias) => {
+    setState((s) => ({
+      ...s,
+      blocked: s.blocked.includes(alias) ? s.blocked : [alias, ...s.blocked],
+      threads: s.threads.map((t) =>
+        t.members.some((m) => m.alias === alias) ? { ...t, closed: true } : t,
+      ),
+    }));
+  }, []);
+
+  const unblockAlias = useCallback<Ctx["unblockAlias"]>((alias) => {
+    setState((s) => ({ ...s, blocked: s.blocked.filter((a) => a !== alias) }));
+  }, []);
+
+  const reportAlias = useCallback<Ctx["reportAlias"]>((alias, reason, note) => {
+    setState((s) => ({
+      ...s,
+      reports: [{ alias, reason, note: note.trim().slice(0, 500), at: Date.now() }, ...s.reports],
+    }));
+  }, []);
+
+  const setDiscoverable = useCallback<Ctx["setDiscoverable"]>((on) => {
+    setState((s) => (s.profile ? { ...s, profile: { ...s.profile, discoverable: on } } : s));
+  }, []);
+
   const value = useMemo<Ctx>(
     () => ({
       ready,
@@ -1005,6 +1297,18 @@ export function MistProvider({ children }: { children: ReactNode }) {
       posts: state.posts,
       penPal: state.penPal,
       letters: state.letters,
+      rooms: state.rooms,
+      blocked: state.blocked,
+      reports: state.reports,
+      ratings: state.ratings,
+      advanceReveal,
+      rateInteraction,
+      sendRoomMessage,
+      toggleRoom,
+      blockAlias,
+      unblockAlias,
+      reportAlias,
+      setDiscoverable,
       saveProfile,
       signOut,
       createThread,
@@ -1037,6 +1341,14 @@ export function MistProvider({ children }: { children: ReactNode }) {
       markLetterRead,
       proposeGreatReveal,
       skipADay,
+      advanceReveal,
+      rateInteraction,
+      sendRoomMessage,
+      toggleRoom,
+      blockAlias,
+      unblockAlias,
+      reportAlias,
+      setDiscoverable,
     ],
   );
 
@@ -1058,3 +1370,69 @@ export function formatCountdown(ms: number) {
   if (hours > 0) return `${hours}h ${String(minutes).padStart(2, "0")}m`;
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
+
+const ROOM_REPLIES = [
+  "adding to that — my lecturer said the same thing last week",
+  "genuinely useful, thank you. saving this",
+  "which campus are you at? we might be able to share notes",
+  "same problem here honestly, it's not just your uni",
+  "count me in for that, I'll bring one more person",
+  "does anyone have the reading list? mine is from last year",
+];
+
+/**
+ * Purpose-first recommendation score. Deliberately ignores anything
+ * appearance-related: overlap of purpose, course, faculty, interests and
+ * availability only.
+ */
+export type Person = (typeof SEED_PEOPLE)[number];
+
+export function personScore(
+  profile: Profile | null,
+  p: Person,
+): { score: number; reasons: string[] } {
+  if (!profile) return { score: 0, reasons: [] };
+  const reasons: string[] = [];
+  let score = 0;
+  const mine = profile.purposes ?? [];
+  const sharedPurposes = p.purposes.filter((x) => mine.includes(x));
+  if (sharedPurposes.length) {
+    score += sharedPurposes.length * 30;
+    reasons.push(`Same goal: ${sharedPurposes.length} shared purpose${sharedPurposes.length > 1 ? "s" : ""}`);
+  }
+  if (profile.course && p.course.toLowerCase() === profile.course.toLowerCase()) {
+    score += 35;
+    reasons.push(`Taking ${p.course} too`);
+  } else if (profile.faculty && p.faculty === profile.faculty) {
+    score += 15;
+    reasons.push(`Also in ${p.faculty}`);
+  }
+  const sharedInterests = p.interests.filter((i) => profile.interests.includes(i));
+  if (sharedInterests.length) {
+    score += sharedInterests.length * 8;
+    reasons.push(`Shares ${sharedInterests.join(" & ")}`);
+  }
+  const overlap = (profile.slots ?? []).filter((s) => p.slots.includes(s));
+  if (overlap.length) {
+    score += overlap.length * 12;
+    reasons.push(`${overlap.length} matching free slot${overlap.length > 1 ? "s" : ""}`);
+  }
+  if (p.year === profile.year) {
+    score += 6;
+    reasons.push(`Same year`);
+  }
+  if (p.university === profile.university) {
+    score += 5;
+  }
+  return { score, reasons };
+}
+
+/** Respects the user's gender-interaction preference, both directions. */
+export function passesGenderFilter(profile: Profile | null, p: Person) {
+  const pref = profile?.matchWith ?? "everyone";
+  if (pref === "women") return p.gender === "woman";
+  if (pref === "men") return p.gender === "man";
+  return true;
+}
+
+export { SEED_PEOPLE };
