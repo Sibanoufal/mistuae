@@ -796,12 +796,26 @@ type Ctx = {
   letters: Letter[];
   saveProfile: (p: Profile) => void;
   signOut: () => void;
+  rooms: Room[];
+  blocked: string[];
+  reports: Report[];
+  ratings: Rating[];
   createThread: (opts: {
     mode: ChatMode;
     duration: ChatDuration;
     sharedInterest: string;
     partner?: { alias: string; university: University };
+    purpose?: PurposeId;
+    groupSize?: number;
   }) => Thread;
+  advanceReveal: (threadId: string) => void;
+  rateInteraction: (threadId: string, alias: string, tags: string[]) => void;
+  sendRoomMessage: (roomId: string, text: string) => void;
+  toggleRoom: (roomId: string) => void;
+  blockAlias: (alias: string) => void;
+  unblockAlias: (alias: string) => void;
+  reportAlias: (alias: string, reason: string, note: string) => void;
+  setDiscoverable: (on: boolean) => void;
   sendMessage: (threadId: string, text: string) => void;
   offerReveal: (threadId: string) => void;
   extendThread: (threadId: string) => void;
