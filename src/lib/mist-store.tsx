@@ -1004,6 +1004,8 @@ export function MistProvider({ children }: { children: ReactNode }) {
         sharedInterest,
         myRevealOffered: false,
         closed: false,
+        revealStage: 0,
+        ...(purpose ? { purpose } : {}),
         messages: [
           {
             id: uid(),
