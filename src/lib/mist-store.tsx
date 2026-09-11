@@ -1370,3 +1370,69 @@ export function formatCountdown(ms: number) {
   if (hours > 0) return `${hours}h ${String(minutes).padStart(2, "0")}m`;
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
+
+const ROOM_REPLIES = [
+  "adding to that — my lecturer said the same thing last week",
+  "genuinely useful, thank you. saving this",
+  "which campus are you at? we might be able to share notes",
+  "same problem here honestly, it's not just your uni",
+  "count me in for that, I'll bring one more person",
+  "does anyone have the reading list? mine is from last year",
+];
+
+/**
+ * Purpose-first recommendation score. Deliberately ignores anything
+ * appearance-related: overlap of purpose, course, faculty, interests and
+ * availability only.
+ */
+export type Person = (typeof SEED_PEOPLE)[number];
+
+export function personScore(
+  profile: Profile | null,
+  p: Person,
+): { score: number; reasons: string[] } {
+  if (!profile) return { score: 0, reasons: [] };
+  const reasons: string[] = [];
+  let score = 0;
+  const mine = profile.purposes ?? [];
+  const sharedPurposes = p.purposes.filter((x) => mine.includes(x));
+  if (sharedPurposes.length) {
+    score += sharedPurposes.length * 30;
+    reasons.push(`Same goal: ${sharedPurposes.length} shared purpose${sharedPurposes.length > 1 ? "s" : ""}`);
+  }
+  if (profile.course && p.course.toLowerCase() === profile.course.toLowerCase()) {
+    score += 35;
+    reasons.push(`Taking ${p.course} too`);
+  } else if (profile.faculty && p.faculty === profile.faculty) {
+    score += 15;
+    reasons.push(`Also in ${p.faculty}`);
+  }
+  const sharedInterests = p.interests.filter((i) => profile.interests.includes(i));
+  if (sharedInterests.length) {
+    score += sharedInterests.length * 8;
+    reasons.push(`Shares ${sharedInterests.join(" & ")}`);
+  }
+  const overlap = (profile.slots ?? []).filter((s) => p.slots.includes(s));
+  if (overlap.length) {
+    score += overlap.length * 12;
+    reasons.push(`${overlap.length} matching free slot${overlap.length > 1 ? "s" : ""}`);
+  }
+  if (p.year === profile.year) {
+    score += 6;
+    reasons.push(`Same year`);
+  }
+  if (p.university === profile.university) {
+    score += 5;
+  }
+  return { score, reasons };
+}
+
+/** Respects the user's gender-interaction preference, both directions. */
+export function passesGenderFilter(profile: Profile | null, p: Person) {
+  const pref = profile?.matchWith ?? "everyone";
+  if (pref === "women") return p.gender === "woman";
+  if (pref === "men") return p.gender === "man";
+  return true;
+}
+
+export { SEED_PEOPLE };
