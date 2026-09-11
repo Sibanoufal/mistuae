@@ -7,6 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { SEED_PEOPLE, SEED_ROOMS, type Gender, type MatchWith, type PurposeId } from "./mist-social";
 
 export const UNIVERSITIES = [
   "RIT Dubai",
