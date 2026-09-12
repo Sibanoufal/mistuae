@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { MistShell } from "@/components/MistShell";
+import { ReportDialog } from "@/components/ReportDialog";
 import { DURATION_LABEL, formatCountdown, useMist } from "@/lib/mist-store";
 
 export const Route = createFileRoute("/chat/$threadId")({
@@ -24,10 +25,14 @@ export const Route = createFileRoute("/chat/$threadId")({
 
 function Chat() {
   const { threadId } = Route.useParams();
-  const { threads, sendMessage, offerReveal, extendThread, closeThread, ready } = useMist();
+  const { threads, sendMessage, offerReveal, extendThread, closeThread, ready, blockAlias, reportAlias } =
+    useMist();
   const thread = threads.find((t) => t.id === threadId);
   const [draft, setDraft] = useState("");
   const [now, setNow] = useState(() => Date.now());
+  const [reporting, setReporting] = useState<string | null>(null);
+  const [reportSent, setReportSent] = useState(false);
+  const [blockedNotice, setBlockedNotice] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
