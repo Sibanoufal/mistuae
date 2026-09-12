@@ -6,6 +6,8 @@ import {
   CAMPUS_PREF_LABEL,
   INTERESTS,
   UNIVERSITIES,
+  UNIVERSITY_DOMAINS,
+  emailMatchesUniversity,
   randomAlias,
   useMist,
   type CampusPref,
@@ -189,11 +191,11 @@ function Join() {
         <div className="lg:col-span-4">
           <p className="font-mono text-[11px] tracking-widest text-coral uppercase">Step 1 of 2</p>
           <h1 className="mt-3 text-4xl leading-tight font-extrabold tracking-tight text-balance">
-            The only thing you upload is proof you&apos;re a student.
+            One student email. That&apos;s the whole door.
           </h1>
           <p className="mt-4 text-pretty text-muted-foreground">
-            Snap your university ID, pick your campus, and Mist keeps it behind the mask. Nobody you
-            chat with ever sees it.
+            Only enrolled students have a university address, so a quick code to your campus inbox
+            is all Mist needs. Your address is never shown to anyone you talk to.
           </p>
           <div className="glass mt-6 rounded-3xl p-5">
             <p className="font-mono text-[11px] tracking-widest text-muted-foreground uppercase">
