@@ -114,8 +114,8 @@ function Join() {
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!photoName) {
-      setError("A student ID photo is required — it's how we keep Mist students-only.");
+    if (!emailVerified) {
+      setError("Verify your student email first — it's how we keep Mist students-only.");
       return;
     }
     if (realName.trim().length < 2) {
@@ -136,7 +136,7 @@ function Join() {
       university,
       year,
       interests,
-      idPhotoName: photoName,
+      email: email.trim().toLowerCase(),
       verified: true,
       realName: realName.trim().slice(0, 40),
       crossCampusOnly: campusPref === "cross",
@@ -208,52 +208,100 @@ function Join() {
 
         <form onSubmit={submit} className="glass rounded-[32px] p-5 sm:p-7 lg:col-span-8" noValidate>
           <fieldset>
-            <legend className="text-sm font-semibold">Student ID photo (required)</legend>
-            <label className="mt-3 flex cursor-pointer flex-col items-center gap-3 rounded-3xl border-2 border-dashed border-teal/40 bg-surface/50 p-6 text-center transition-colors hover:bg-surface">
-              {photoPreview ? (
-                <img
-                  src={photoPreview}
-                  alt="Preview of the student ID you uploaded"
-                  className="max-h-40 rounded-2xl object-contain"
-                />
-              ) : (
-                <span aria-hidden="true" className="text-3xl">
-                  🪪
-                </span>
-              )}
-              <span className="text-sm font-semibold text-teal">
-                {photoName ? `Selected: ${photoName} — change photo` : "Upload your student ID photo"}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                Stored only on this device · never shown to your match
-              </span>
-              <input
-                type="file"
-                accept="image/*"
-                className="sr-only"
-                onChange={(e) => onPhoto(e.target.files?.[0])}
-              />
+            <legend className="text-sm font-semibold">Verify your student email (required)</legend>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Only addresses from the ten UAE campuses can join — that&apos;s the whole door policy.
+            </p>
+
+            <label htmlFor="uni" className="mt-4 block text-sm font-semibold">
+              Your university
             </label>
+            <select
+              id="uni"
+              value={university}
+              onChange={(e) => {
+                setUniversity(e.target.value as University);
+                setSentCode(null);
+                setEmailVerified(false);
+              }}
+              className="mt-2 w-full rounded-2xl border border-line bg-card px-4 py-3 text-sm"
+            >
+              {UNIVERSITIES.map((u) => (
+                <option key={u} value={u}>
+                  {u}
+                </option>
+              ))}
+            </select>
+
+            <label htmlFor="email" className="mt-4 block text-sm font-semibold">
+              Student email
+            </label>
+            <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+              <input
+                id="email"
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setEmailVerified(false);
+                  setSentCode(null);
+                }}
+                placeholder={`you@${UNIVERSITY_DOMAINS[university][0]}`}
+                className="flex-1 rounded-2xl border border-line bg-card px-4 py-3 text-sm"
+              />
+              <button
+                type="button"
+                onClick={sendCode}
+                disabled={emailVerified}
+                className="rounded-2xl bg-ink px-5 py-3 text-sm font-semibold text-background disabled:opacity-50"
+              >
+                {sentCode ? "Resend code" : "Send code"}
+              </button>
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Accepted for {university}: {UNIVERSITY_DOMAINS[university].map((d) => `@${d}`).join(", ")}
+            </p>
+
+            {sentCode && !emailVerified ? (
+              <div className="mt-4 rounded-3xl border-2 border-dashed border-teal/40 bg-surface/50 p-5">
+                <p className="text-sm font-semibold">Enter the 6-digit code we sent to {email}</p>
+                <p className="mt-1 font-mono text-xs text-muted-foreground">
+                  Demo prototype — your code is{" "}
+                  <span className="text-lg font-bold text-teal tracking-widest">{sentCode}</span>
+                </p>
+                <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                  <input
+                    value={codeInput}
+                    inputMode="numeric"
+                    maxLength={6}
+                    onChange={(e) => setCodeInput(e.target.value.replace(/\D/g, ""))}
+                    placeholder="000000"
+                    aria-label="Verification code"
+                    className="flex-1 rounded-2xl border border-line bg-card px-4 py-3 font-mono text-lg tracking-[0.4em]"
+                  />
+                  <button
+                    type="button"
+                    onClick={confirmCode}
+                    className="rounded-2xl bg-teal px-5 py-3 text-sm font-semibold text-teal-foreground"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
+            {emailVerified ? (
+              <p className="mt-4 rounded-2xl bg-mint px-4 py-3 text-sm font-semibold text-ink">
+                ✓ Verified Student — {email}. Your address is never shown to anyone you talk to.
+              </p>
+            ) : null}
           </fieldset>
 
+
           <div className="mt-6 grid gap-5 sm:grid-cols-2">
-            <div>
-              <label htmlFor="uni" className="block text-sm font-semibold">
-                Your university
-              </label>
-              <select
-                id="uni"
-                value={university}
-                onChange={(e) => setUniversity(e.target.value as University)}
-                className="mt-2 w-full rounded-2xl border border-line bg-card px-4 py-3 text-sm"
-              >
-                {UNIVERSITIES.map((u) => (
-                  <option key={u} value={u}>
-                    {u}
-                  </option>
-                ))}
-              </select>
-            </div>
+
             <div>
               <label htmlFor="year" className="block text-sm font-semibold">
                 Year of study
