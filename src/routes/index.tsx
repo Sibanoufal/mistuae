@@ -177,6 +177,81 @@ function Index() {
         </div>
       </section>
 
+      {/* Start here */}
+      <section aria-labelledby="start-here" className="glass rounded-[32px] p-5 sm:p-7">
+        <p className="font-mono text-[11px] tracking-widest text-coral uppercase">
+          New here? Start with one
+        </p>
+        <h2 id="start-here" className="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl">
+          {profile ? "Pick what you feel like today" : "Three ways in — choose one, ignore the rest"}
+        </h2>
+        <ol className="mt-5 grid gap-3 md:grid-cols-3">
+          <li>
+            <Link
+              to={profile ? "/letters" : "/join"}
+              className="flex h-full flex-col rounded-3xl bg-butter p-5 text-butter-foreground transition-transform hover:-translate-y-1"
+            >
+              <span className="font-mono text-[10px] tracking-widest uppercase opacity-70">
+                Step 1 · 2 minutes
+              </span>
+              <span className="mt-2 text-xl font-extrabold">
+                {profile ? "Read today's letter" : "Verify your student email"}
+              </span>
+              <span className="mt-1 text-sm opacity-80">
+                {profile
+                  ? "One letter a day from your pen pal. Reply whenever."
+                  : "A code to your university inbox. Nothing else is needed."}
+              </span>
+              <span className="mt-auto pt-4 text-sm font-semibold">
+                {profile ? "Open my inbox →" : "Start here →"}
+              </span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to={profile ? "/match" : "/problem-solution"}
+              className="flex h-full flex-col rounded-3xl bg-mint p-5 transition-transform hover:-translate-y-1"
+            >
+              <span className="font-mono text-[10px] tracking-widest text-ink/60 uppercase">
+                Step 2 · pick a person
+              </span>
+              <span className="mt-2 text-xl font-extrabold">
+                {profile ? "Swipe the masked deck" : "See how Mist works"}
+              </span>
+              <span className="mt-1 text-sm text-ink/70">
+                {profile
+                  ? "Drag a card right to open an anonymous thread."
+                  : "The problem, the idea and every feature on one page."}
+              </span>
+              <span className="mt-auto pt-4 text-sm font-semibold">
+                {profile ? "Open the deck →" : "Read the short version →"}
+              </span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to={profile ? "/rooms" : "/rooms"}
+              className="flex h-full flex-col rounded-3xl bg-lilac/30 p-5 transition-transform hover:-translate-y-1"
+            >
+              <span className="font-mono text-[10px] tracking-widest text-plum uppercase">
+                Step 3 · or just lurk
+              </span>
+              <span className="mt-2 text-xl font-extrabold">Drop into an open room</span>
+              <span className="mt-1 text-sm text-ink/70">
+                Engineering, law, design — cross-campus group chats, no pairing required.
+              </span>
+              <span className="mt-auto pt-4 text-sm font-semibold text-plum">Browse rooms →</span>
+            </Link>
+          </li>
+        </ol>
+        <p className="mt-4 text-xs text-muted-foreground">
+          Everything else — boards, discovery, safety controls — sits in the menu above and can wait
+          until you&apos;ve done one of these.
+        </p>
+      </section>
+
+
+
       {/* Dashboard strip for verified students */}
       {profile ? (
         <section
