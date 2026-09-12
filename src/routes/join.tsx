@@ -50,8 +50,10 @@ function Join() {
   const [year, setYear] = useState(profile?.year ?? "Year 2");
   const [realName, setRealName] = useState(profile?.realName ?? "");
   const [interests, setInterests] = useState<string[]>(profile?.interests ?? []);
-  const [photoName, setPhotoName] = useState(profile?.idPhotoName ?? "");
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [email, setEmail] = useState(profile?.email ?? "");
+  const [sentCode, setSentCode] = useState<string | null>(null);
+  const [codeInput, setCodeInput] = useState("");
+  const [emailVerified, setEmailVerified] = useState(Boolean(profile?.email));
   const [campusPref, setCampusPref] = useState<CampusPref>(
     profile?.campusPref ?? (profile?.crossCampusOnly ? "cross" : "any"),
   );
@@ -69,21 +71,31 @@ function Join() {
   }, [profile?.alias]);
   const [error, setError] = useState<string | null>(null);
 
-  function onPhoto(file: File | undefined) {
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      setError("That file isn't an image. Please upload a photo of your student ID.");
+  function sendCode() {
+    const value = email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      setError("That doesn't look like an email address.");
       return;
     }
-    if (file.size > 6 * 1024 * 1024) {
-      setError("That image is over 6 MB. Please upload a smaller photo.");
+    if (!emailMatchesUniversity(value, university)) {
+      setError(
+        `Use your ${university} student email (ending in @${UNIVERSITY_DOMAINS[university][0]}). Personal addresses can't join Mist.`,
+      );
       return;
     }
     setError(null);
-    setPhotoName(file.name);
-    const reader = new FileReader();
-    reader.onload = () => setPhotoPreview(String(reader.result));
-    reader.readAsDataURL(file);
+    setEmailVerified(false);
+    setCodeInput("");
+    setSentCode(String(Math.floor(100000 + Math.random() * 900000)));
+  }
+
+  function confirmCode() {
+    if (codeInput.trim() !== sentCode) {
+      setError("That code doesn't match the one we sent. Check it and try again.");
+      return;
+    }
+    setError(null);
+    setEmailVerified(true);
   }
 
   function togglePurpose(p: PurposeId) {
