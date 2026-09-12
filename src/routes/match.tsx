@@ -86,6 +86,7 @@ function Match() {
   const [passed, setPassed] = useState(0);
   const [drag, setDrag] = useState({ x: 0, y: 0, active: false });
   const [matched, setMatched] = useState<Candidate | null>(null);
+  const [expanded, setExpanded] = useState<Candidate | null>(null);
   const start = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
@@ -138,9 +139,13 @@ function Match() {
   function onUp() {
     if (!start.current) return;
     start.current = null;
+    const moved = Math.abs(drag.x) + Math.abs(drag.y);
     if (drag.x > 110) resolve("like");
     else if (drag.x < -110) resolve("pass");
-    else setDrag({ x: 0, y: 0, active: false });
+    else {
+      setDrag({ x: 0, y: 0, active: false });
+      if (moved < 8 && top) setExpanded(top);
+    }
   }
 
   if (ready && !profile) {
@@ -223,9 +228,9 @@ function Match() {
         <div className="mt-6 grid gap-5 lg:grid-cols-12">
           {/* Deck */}
           <section aria-label="Swipe deck" className="lg:col-span-7">
-            <div className="relative mx-auto h-[420px] w-full max-w-[420px] select-none">
+            <div className="relative mx-auto h-[470px] w-full max-w-[420px] select-none sm:h-[480px]">
               {next ? (
-                <div className="absolute inset-x-4 top-4 h-[380px] rotate-2 rounded-[28px] border border-paper-line bg-gradient-to-br from-lilac/25 to-paper" />
+                <div className="absolute inset-x-4 top-4 h-[86%] rotate-2 rounded-[28px] border border-paper-line bg-gradient-to-br from-lilac/25 to-paper" />
               ) : null}
               {top ? (
                 <article
@@ -238,7 +243,7 @@ function Match() {
                     transition: drag.active ? "none" : "transform 320ms cubic-bezier(0.32,0.72,0,1)",
                     touchAction: "none",
                   }}
-                  className="paper absolute inset-0 cursor-grab overflow-hidden rounded-[28px] p-6 shadow-[0_30px_50px_-30px_oklch(0.262_0.038_210/0.6)] active:cursor-grabbing"
+                  className="paper absolute inset-0 flex cursor-grab flex-col overflow-hidden rounded-[28px] p-5 sm:p-6 shadow-[0_30px_50px_-30px_oklch(0.262_0.038_210/0.6)] active:cursor-grabbing"
                 >
                   <div className="flex items-start justify-between">
                     <div>
@@ -253,11 +258,19 @@ function Match() {
                     <WaxSeal tone="lilac" label={top.alias[0]} />
                   </div>
 
-                  <p className="mt-6 max-w-[30ch] font-serif text-2xl leading-snug text-pretty">
+                  <p className="mt-4 font-serif text-xl leading-snug text-pretty sm:text-2xl">
                     “{top.line}”
                   </p>
 
-                  <dl className="mt-6 space-y-2 text-sm">
+                  <button
+                    type="button"
+                    onClick={() => setExpanded(top)}
+                    className="mt-2 self-start text-xs font-semibold text-plum underline underline-offset-4"
+                  >
+                    Read the full card →
+                  </button>
+
+                  <dl className="mt-auto space-y-2 pt-4 text-sm">
                     <div className="flex justify-between rounded-2xl bg-background/70 px-3 py-2">
                       <dt className="text-muted-foreground">Shared interest</dt>
                       <dd className="font-semibold">{top.interest}</dd>
@@ -322,7 +335,8 @@ function Match() {
               </button>
             </div>
             <p className="mt-2 text-center text-xs text-muted-foreground">
-              Drag the card with a mouse or finger — or use these buttons if you prefer.
+              Drag the card with a mouse or finger, tap it to read the whole card, or use these
+              buttons.
             </p>
           </section>
 
