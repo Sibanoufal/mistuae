@@ -2,7 +2,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { MistShell } from "@/components/MistShell";
 import { useMist } from "@/lib/mist-store";
-import { REPORT_REASONS } from "@/lib/mist-social";
+import { ReportDialog } from "@/components/ReportDialog";
 
 export const Route = createFileRoute("/rooms/$roomId")({
   head: () => ({
@@ -31,8 +31,6 @@ function RoomView() {
   const room = rooms.find((r) => r.id === roomId);
   const [text, setText] = useState("");
   const [reporting, setReporting] = useState<string | null>(null);
-  const [reason, setReason] = useState(REPORT_REASONS[0]!);
-  const [note, setNote] = useState("");
   const [sent, setSent] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);
 
