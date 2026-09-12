@@ -35,6 +35,29 @@ export const UNIVERSITY_SHORT: Record<University, string> = {
   "Amity University Dubai": "Amity",
 };
 
+/** Official student email domains — sign-up is gated on these. */
+export const UNIVERSITY_DOMAINS: Record<University, string[]> = {
+  "RIT Dubai": ["rit.edu", "mail.rit.edu"],
+  "Middlesex University Dubai": ["live.mdx.ac.ae", "mdx.ac.ae"],
+  "American University of Sharjah": ["aus.edu"],
+  "Heriot-Watt University Dubai": ["hw.ac.uk"],
+  "University of Wollongong in Dubai": ["uowmail.edu.au", "uowdubai.ac.ae"],
+  "Manipal Academy of Higher Education Dubai": ["learner.manipaldubai.com", "manipaldubai.com"],
+  "BITS Pilani Dubai": ["dubai.bits-pilani.ac.in"],
+  "Murdoch University Dubai": ["murdochuniversity.ae", "murdoch.edu.au"],
+  "University of Sharjah": ["sharjah.ac.ae"],
+  "Amity University Dubai": ["amityuniversity.ae"],
+};
+
+export function emailDomain(email: string) {
+  return email.trim().toLowerCase().split("@")[1] ?? "";
+}
+
+export function emailMatchesUniversity(email: string, university: University) {
+  const d = emailDomain(email);
+  return UNIVERSITY_DOMAINS[university].some((x) => d === x || d.endsWith(`.${x}`));
+}
+
 export type CampusPref = "any" | "cross" | "same";
 
 export const CAMPUS_PREF_LABEL: Record<CampusPref, { title: string; body: string }> = {
@@ -163,7 +186,9 @@ export type Profile = {
   university: University;
   year: string;
   interests: string[];
-  idPhotoName: string;
+  idPhotoName?: string;
+  /** Verified university email — how Mist keeps the pool students-only. */
+  email?: string;
   verified: boolean;
   realName: string;
   crossCampusOnly: boolean;

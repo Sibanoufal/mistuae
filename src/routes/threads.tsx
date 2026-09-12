@@ -78,8 +78,8 @@ function Threads() {
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
               {profile
-                ? `${profile.university} · ${profile.year} · verified by student ID`
-                : "Verify your student ID to start."}
+                ? `${profile.university} · ${profile.year} · verified by student email`
+                : "Verify your student email to start."}
             </p>
             {profile ? (
               <Link to="/letters" className="mt-2 inline-block text-sm font-semibold text-plum">
@@ -99,7 +99,7 @@ function Threads() {
               to="/join"
               className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-background"
             >
-              Verify student ID
+              Verify student email
             </Link>
           )}
         </div>

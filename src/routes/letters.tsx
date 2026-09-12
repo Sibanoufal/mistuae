@@ -151,13 +151,13 @@ function Letters() {
           <p className="font-mono text-[11px] tracking-widest text-coral uppercase">Letter inbox</p>
           <h1 className="mt-2 font-serif text-3xl">Your pen pal is waiting on a stamp.</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Verify your student ID once and we assign you an anonymous pen pal for the semester.
+            Verify your student email once and we assign you an anonymous pen pal for the semester.
           </p>
           <Link
             to="/join"
             className="mt-5 inline-block rounded-full bg-ink px-6 py-3 text-sm font-semibold text-background"
           >
-            Verify my student ID
+            Verify my student email
           </Link>
         </div>
       </MistShell>

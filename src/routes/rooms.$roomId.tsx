@@ -2,7 +2,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { MistShell } from "@/components/MistShell";
 import { useMist } from "@/lib/mist-store";
-import { REPORT_REASONS } from "@/lib/mist-social";
+import { ReportDialog } from "@/components/ReportDialog";
 
 export const Route = createFileRoute("/rooms/$roomId")({
   head: () => ({
@@ -31,8 +31,6 @@ function RoomView() {
   const room = rooms.find((r) => r.id === roomId);
   const [text, setText] = useState("");
   const [reporting, setReporting] = useState<string | null>(null);
-  const [reason, setReason] = useState(REPORT_REASONS[0]!);
-  const [note, setNote] = useState("");
   const [sent, setSent] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);
 
@@ -152,63 +150,23 @@ function RoomView() {
       </section>
 
       {reporting ? (
-        <div className="glass mt-5 rounded-3xl p-5">
-          <h2 className="text-lg font-bold">Report {reporting}</h2>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {REPORT_REASONS.map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => setReason(r)}
-                className={`rounded-full px-3 py-1.5 text-sm ${
-                  reason === r ? "bg-ink text-background" : "bg-ink/5 hover:bg-ink/10"
-                }`}
-              >
-                {r}
-              </button>
-            ))}
-          </div>
-          <textarea
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            maxLength={500}
-            rows={3}
-            placeholder="Anything the moderators should know (optional)"
-            className="mt-3 w-full rounded-2xl border border-line bg-card px-4 py-3 text-sm"
-          />
-          <div className="mt-3 flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                reportAlias(reporting, reason, note);
-                setSent(reporting);
-                setReporting(null);
-                setNote("");
-              }}
-              className="rounded-full bg-coral px-5 py-2.5 text-sm font-semibold text-coral-foreground"
-            >
-              Send report
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                blockAlias(reporting);
-                setReporting(null);
-              }}
-              className="rounded-full border border-line bg-card px-5 py-2.5 text-sm font-semibold"
-            >
-              Report and block
-            </button>
-            <button
-              type="button"
-              onClick={() => setReporting(null)}
-              className="rounded-full px-5 py-2.5 text-sm font-semibold text-muted-foreground"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
+        <ReportDialog
+          alias={reporting}
+          onClose={() => setReporting(null)}
+          onReport={(reason, note) => {
+            reportAlias(reporting, reason, note);
+            setSent(reporting);
+            setReporting(null);
+          }}
+          onBlock={() => {
+            blockAlias(reporting);
+            reportAlias(reporting, "Blocked from room", "");
+            setSent(reporting);
+            setReporting(null);
+          }}
+        />
       ) : null}
+
 
       {sent ? (
         <p className="mt-4 rounded-2xl bg-mint px-4 py-3 text-sm text-ink">

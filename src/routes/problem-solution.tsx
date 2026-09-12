@@ -8,7 +8,7 @@ export const Route = createFileRoute("/problem-solution")({
       {
         name: "description",
         content:
-          "The loneliness problem in UAE universities, the research behind it, how Mist's anonymous pairing solves it, and why it matters for student life.",
+          "The loneliness problem in UAE universities, the informal research behind it, how Mist's anonymous pairing solves it, and why it matters for student life.",
       },
       { property: "og:title", content: "Problem & Solution — Mist" },
       {
@@ -23,28 +23,28 @@ export const Route = createFileRoute("/problem-solution")({
 
 const RESEARCH = [
   {
-    stat: "1 in 3",
-    label: "students report frequent loneliness",
+    stat: "10",
+    label: "UAE campuses Mist is built for",
     source:
-      "Global higher-education wellbeing surveys consistently place frequent loneliness among roughly a third of undergraduates. [1]",
-  },
-  {
-    stat: "~85%",
-    label: "of UAE university students are expatriates",
-    source:
-      "UAE campuses are among the most internationally mixed in the world, so most students arrive without a school friend group. [2]",
-  },
-  {
-    stat: "30 min",
-    label: "typical hop between two Dubai clusters",
-    source:
-      "Dubai's campuses sit in three separate clusters — Academic City, Knowledge Park and Silicon Oasis — plus University City in Sharjah, so most students commute in and leave straight after lectures. [3]",
+      "RIT Dubai, Middlesex, AUS, Heriot-Watt, UOWD, Manipal, BITS Pilani, Murdoch, University of Sharjah and Amity. [1]",
   },
   {
     stat: "4",
     label: "clusters holding all ten campuses",
     source:
-      "Manipal, BITS and Amity share one street in Academic City; MDX, Heriot-Watt, UOWD and Murdoch share Knowledge Park; AUS and UOS are neighbours in Sharjah. Neighbours on paper, strangers in practice. [3]",
+      "Dubai International Academic City, Dubai Knowledge Park, Dubai Silicon Oasis and University City in Sharjah. Neighbours on paper, strangers in practice. [1]",
+  },
+  {
+    stat: "Commuter",
+    label: "campus life is the norm here",
+    source:
+      "Most students travel in for lectures and leave afterwards, so unplanned social contact is rare. Observed in our own interviews, not measured. [2]",
+  },
+  {
+    stat: "Identity",
+    label: "is the cost students won't pay",
+    source:
+      "Every student we spoke to said asking for company with their name and face attached felt too exposing. This is a qualitative finding from a small sample. [2]",
   },
 ];
 
@@ -145,8 +145,9 @@ function ProblemSolution() {
             2 · Mini research
           </h2>
           <p className="mt-2 max-w-[62ch] text-muted-foreground">
-            Desk research on student wellbeing and the UAE higher-education landscape, plus short
-            informal interviews with students across the ten campuses this platform serves.
+            Short informal interviews with students across the campuses this platform serves, plus
+            publicly checkable facts about where those campuses sit. We deliberately make no
+            statistical claims: nothing here is a survey result.
           </p>
           <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {RESEARCH.map((r) => (
@@ -168,9 +169,9 @@ function ProblemSolution() {
             ))}
           </div>
           <p className="mt-4 text-xs text-muted-foreground">
-            Figures above are indicative and are used to frame the design problem, not as formal
-            statistical claims. Sources are listed in the References section below; campus locations
-            in [3] are factual.
+            No numbers on this page are survey statistics. Campus locations in [1] are factual and
+            checkable; everything in [2] comes from a handful of informal student conversations and
+            describes what we heard, not what is true of all students.
           </p>
         </section>
 
@@ -181,7 +182,7 @@ function ProblemSolution() {
           <div className="glass mt-4 rounded-[28px] p-6">
             <p className="text-lg text-pretty">
               <strong>Mist</strong> is secret pen pals for UAE university students. You verify once
-              with a student ID photo, then you are given a mask — an alias like{" "}
+              with your university student email, then you are given a mask — an alias like{" "}
               <em>Auburn Otter</em>. Mist pairs you anonymously with another verified student, or a
               small crew of them, around a shared interest. You choose up front how long the thread
               lasts: a few minutes, a day, or forever. You can lift your mask at any moment, and the
@@ -210,21 +211,21 @@ function ProblemSolution() {
           </h2>
           <div className="glass mt-4 grid gap-5 rounded-[28px] p-6 sm:grid-cols-3">
             <p className="text-pretty text-muted-foreground">
-              <strong className="text-ink">For the student.</strong> Loneliness at university is
-              linked to poorer academic performance, worse mental health and higher dropout intent. A
-              single low-risk conversation is often all it takes to break the first-week spiral.
+              <strong className="text-ink">For the student.</strong> The students we spoke to
+              described feeling isolated in a crowd. A single low-risk conversation is a small,
+              concrete thing Mist can actually give them.
             </p>
             <p className="text-pretty text-muted-foreground">
-              <strong className="text-ink">For the campus.</strong> Students who feel socially
-              connected participate in clubs, attend events and stay enrolled. Mist feeds people into
-              existing campus life instead of competing with it.
+              <strong className="text-ink">For the campus.</strong> Mist feeds people into existing
+              clubs, events and societies instead of competing with them — the boards end in a real
+              meetup on a real campus.
             </p>
             <p className="text-pretty text-muted-foreground">
               <strong className="text-ink">For the wider UAE student ecosystem.</strong> Ten
               universities sit in four clusters — three in Academic City, four in Knowledge Park, RIT
-              alone in Silicon Oasis, and two side by side in Sharjah University City — and barely
+              alone in Silicon Oasis, and two side by side in Sharjah University City — and rarely
               mix, even when they share a street. Cross-campus anonymous pairing quietly builds one
-              student community out of ten. [4]
+              student community out of ten. [1]
             </p>
           </div>
         </section>
@@ -241,7 +242,7 @@ function ProblemSolution() {
               <h3 className="mt-2 text-lg font-bold">One low-risk conversation</h3>
               <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
                 <li>Transfers and mid-year joiners who missed the first-week friend scramble.</li>
-                <li>Shy and neurodivergent students for whom club culture is exhausting. [1]</li>
+                <li>Shy and neurodivergent students for whom club culture is exhausting. [2]</li>
                 <li>Commuters who are on campus for lectures only.</li>
                 <li>Postgraduates in cohorts of under ten people.</li>
               </ul>
@@ -252,7 +253,7 @@ function ProblemSolution() {
               </p>
               <h3 className="mt-2 text-lg font-bold">Fuller events, fewer dropouts</h3>
               <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-                <li>Socially connected students attend more and withdraw less. [1]</li>
+                <li>A channel that reaches students who never sign up for anything. [2]</li>
                 <li>The boards feed people into existing clubs instead of competing with them.</li>
                 <li>Student affairs gets a channel that reaches the students who never show up.</li>
                 <li>The Great Reveal booth is a ready-made end-of-term campus event.</li>
@@ -264,9 +265,9 @@ function ProblemSolution() {
               </p>
               <h3 className="mt-2 text-lg font-bold">Ten campuses, one student body</h3>
               <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-                <li>Academic City, Knowledge Park, Silicon Oasis and Sharjah stop being silos. [3]</li>
+                <li>Academic City, Knowledge Park, Silicon Oasis and Sharjah stop being silos. [1]</li>
                 <li>Cross-campus project crews that no single university could staff alone.</li>
-                <li>An expatriate-majority student body builds ties across nationalities. [2]</li>
+                <li>An internationally mixed student body builds ties across nationalities.</li>
                 <li>Shared events cost less per campus and reach further.</li>
               </ul>
             </div>
@@ -279,23 +280,15 @@ function ProblemSolution() {
           </h2>
           <ol className="glass mt-4 space-y-2 rounded-[28px] p-6 text-sm text-muted-foreground">
             <li>
-              <strong className="text-ink">[1]</strong> Published higher-education wellbeing research
-              on student loneliness, belonging, attainment and withdrawal intent (indicative figures,
-              not a formal meta-analysis).
-            </li>
-            <li>
-              <strong className="text-ink">[2]</strong> UAE higher-education demographics: the
-              student population is overwhelmingly expatriate and internationally mixed.
-            </li>
-            <li>
-              <strong className="text-ink">[3]</strong> Campus locations verified per university:
+              <strong className="text-ink">[1]</strong> Campus locations, verified per university:
               Manipal, BITS Pilani and Amity in Dubai International Academic City; Middlesex,
               Heriot-Watt, Wollongong and Murdoch in Dubai Knowledge Park; RIT Dubai in Dubai Silicon
               Oasis; AUS and University of Sharjah in University City, Sharjah.
             </li>
             <li>
-              <strong className="text-ink">[4]</strong> Informal student interviews conducted across
-              these campuses during this challenge; quotes are paraphrased.
+              <strong className="text-ink">[2]</strong> Informal conversations with a small number of
+              students across these campuses during this challenge. Quotes are paraphrased. This is
+              qualitative design research on a small sample — not a survey, and not generalisable.
             </li>
           </ol>
         </section>

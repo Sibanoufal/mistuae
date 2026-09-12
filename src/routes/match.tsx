@@ -86,6 +86,7 @@ function Match() {
   const [passed, setPassed] = useState(0);
   const [drag, setDrag] = useState({ x: 0, y: 0, active: false });
   const [matched, setMatched] = useState<Candidate | null>(null);
+  const [expanded, setExpanded] = useState<Candidate | null>(null);
   const start = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
@@ -138,9 +139,13 @@ function Match() {
   function onUp() {
     if (!start.current) return;
     start.current = null;
+    const moved = Math.abs(drag.x) + Math.abs(drag.y);
     if (drag.x > 110) resolve("like");
     else if (drag.x < -110) resolve("pass");
-    else setDrag({ x: 0, y: 0, active: false });
+    else {
+      setDrag({ x: 0, y: 0, active: false });
+      if (moved < 8 && top) setExpanded(top);
+    }
   }
 
   if (ready && !profile) {
@@ -149,13 +154,13 @@ function Match() {
         <div className="glass mx-auto my-16 max-w-md rounded-[32px] p-8 text-center">
           <h1 className="text-2xl font-extrabold">Verify first</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Mist is students-only, so we need your student ID photo before matching you.
+            Mist is students-only, so we need your university email verified before matching you.
           </p>
           <Link
             to="/join"
             className="mt-5 inline-block rounded-full bg-ink px-6 py-3 text-sm font-semibold text-background"
           >
-            Verify my student ID
+            Verify my student email
           </Link>
         </div>
       </MistShell>
@@ -223,9 +228,9 @@ function Match() {
         <div className="mt-6 grid gap-5 lg:grid-cols-12">
           {/* Deck */}
           <section aria-label="Swipe deck" className="lg:col-span-7">
-            <div className="relative mx-auto h-[420px] w-full max-w-[420px] select-none">
+            <div className="relative mx-auto h-[470px] w-full max-w-[420px] select-none sm:h-[480px]">
               {next ? (
-                <div className="absolute inset-x-4 top-4 h-[380px] rotate-2 rounded-[28px] border border-paper-line bg-gradient-to-br from-lilac/25 to-paper" />
+                <div className="absolute inset-x-4 top-4 h-[86%] rotate-2 rounded-[28px] border border-paper-line bg-gradient-to-br from-lilac/25 to-paper" />
               ) : null}
               {top ? (
                 <article
@@ -238,7 +243,7 @@ function Match() {
                     transition: drag.active ? "none" : "transform 320ms cubic-bezier(0.32,0.72,0,1)",
                     touchAction: "none",
                   }}
-                  className="paper absolute inset-0 cursor-grab overflow-hidden rounded-[28px] p-6 shadow-[0_30px_50px_-30px_oklch(0.262_0.038_210/0.6)] active:cursor-grabbing"
+                  className="paper absolute inset-0 flex cursor-grab flex-col overflow-hidden rounded-[28px] p-5 sm:p-6 shadow-[0_30px_50px_-30px_oklch(0.262_0.038_210/0.6)] active:cursor-grabbing"
                 >
                   <div className="flex items-start justify-between">
                     <div>
@@ -253,11 +258,19 @@ function Match() {
                     <WaxSeal tone="lilac" label={top.alias[0]} />
                   </div>
 
-                  <p className="mt-6 max-w-[30ch] font-serif text-2xl leading-snug text-pretty">
+                  <p className="mt-4 font-serif text-xl leading-snug text-pretty sm:text-2xl">
                     “{top.line}”
                   </p>
 
-                  <dl className="mt-6 space-y-2 text-sm">
+                  <button
+                    type="button"
+                    onClick={() => setExpanded(top)}
+                    className="mt-2 self-start text-xs font-semibold text-plum underline underline-offset-4"
+                  >
+                    Read the full card →
+                  </button>
+
+                  <dl className="mt-auto space-y-2 pt-4 text-sm">
                     <div className="flex justify-between rounded-2xl bg-background/70 px-3 py-2">
                       <dt className="text-muted-foreground">Shared interest</dt>
                       <dd className="font-semibold">{top.interest}</dd>
@@ -322,7 +335,8 @@ function Match() {
               </button>
             </div>
             <p className="mt-2 text-center text-xs text-muted-foreground">
-              Drag the card with a mouse or finger — or use these buttons if you prefer.
+              Drag the card with a mouse or finger, tap it to read the whole card, or use these
+              buttons.
             </p>
           </section>
 
@@ -428,6 +442,73 @@ function Match() {
           </div>
         ) : null}
       </div>
+
+      {expanded ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Full card for ${expanded.alias}`}
+          className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-ink/40 p-4 backdrop-blur-sm"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setExpanded(null);
+          }}
+        >
+          <article className="paper animate-pop my-8 w-full max-w-md rounded-[28px] p-6">
+            <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+              Masked student
+            </p>
+            <h2 className="mt-1 font-serif text-3xl">{expanded.alias}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {UNIVERSITY_SHORT[expanded.university]} · {expanded.year}
+            </p>
+            <p className="mt-4 font-serif text-2xl leading-snug text-pretty">“{expanded.line}”</p>
+            <dl className="mt-5 space-y-2 text-sm">
+              <div className="flex justify-between gap-3 rounded-2xl bg-background/70 px-3 py-2">
+                <dt className="text-muted-foreground">Shared interest</dt>
+                <dd className="text-right font-semibold">{expanded.interest}</dd>
+              </div>
+              <div className="flex justify-between gap-3 rounded-2xl bg-background/70 px-3 py-2">
+                <dt className="text-muted-foreground">Campus</dt>
+                <dd className="text-right font-semibold">{expanded.university}</dd>
+              </div>
+              <div className="flex justify-between gap-3 rounded-2xl bg-background/70 px-3 py-2">
+                <dt className="text-muted-foreground">Distance</dt>
+                <dd className="text-right text-xs font-semibold">
+                  {profile
+                    ? travelNote(profile.university, expanded.university)
+                    : CAMPUS_AREA[expanded.university]}
+                </dd>
+              </div>
+            </dl>
+            <div className="mt-6 grid gap-2 sm:grid-cols-2">
+              <button
+                onClick={() => {
+                  setExpanded(null);
+                  resolve("like");
+                }}
+                className="rounded-full bg-coral px-5 py-3 text-sm font-semibold text-coral-foreground"
+              >
+                ✎ Write to them
+              </button>
+              <button
+                onClick={() => {
+                  setExpanded(null);
+                  resolve("pass");
+                }}
+                className="rounded-full border border-line bg-card px-5 py-3 text-sm font-semibold"
+              >
+                ✕ Pass
+              </button>
+            </div>
+            <button
+              onClick={() => setExpanded(null)}
+              className="mt-2 w-full rounded-full px-5 py-2.5 text-sm font-semibold text-muted-foreground"
+            >
+              Back to the deck
+            </button>
+          </article>
+        </div>
+      ) : null}
 
       {/* Postmarked match modal */}
       {matched ? (

@@ -33,7 +33,7 @@ function Settings() {
         <section className="glass mt-8 rounded-3xl p-8 text-center">
           <h1 className="text-3xl font-extrabold tracking-tight">Safety & controls</h1>
           <p className="mx-auto mt-3 max-w-md text-muted-foreground">
-            Verify your student ID to set your interaction preferences.
+            Verify your student email to set your interaction preferences.
           </p>
           <Link to="/join" className="mt-6 inline-block rounded-full bg-ink px-6 py-3 font-semibold text-background">
             Get verified
@@ -156,7 +156,7 @@ function Settings() {
           ))}
         </ul>
         <p className="mt-4 rounded-2xl bg-coral/15 px-4 py-3 text-sm">
-          Your student ID photo is never shown to anyone. It is checked once at sign-up, then all anyone ever sees
+          Your student email is never shown to anyone. It is checked once at sign-up, then all anyone ever sees
           is a <strong>✓ Verified student</strong> badge.
         </p>
       </section>

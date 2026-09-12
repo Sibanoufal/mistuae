@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { MistShell } from "@/components/MistShell";
+import { ReportDialog } from "@/components/ReportDialog";
 import { DURATION_LABEL, formatCountdown, useMist } from "@/lib/mist-store";
 
 export const Route = createFileRoute("/chat/$threadId")({
@@ -24,10 +25,14 @@ export const Route = createFileRoute("/chat/$threadId")({
 
 function Chat() {
   const { threadId } = Route.useParams();
-  const { threads, sendMessage, offerReveal, extendThread, closeThread, ready } = useMist();
+  const { threads, sendMessage, offerReveal, extendThread, closeThread, ready, blockAlias, reportAlias } =
+    useMist();
   const thread = threads.find((t) => t.id === threadId);
   const [draft, setDraft] = useState("");
   const [now, setNow] = useState(() => Date.now());
+  const [reporting, setReporting] = useState<string | null>(null);
+  const [reportSent, setReportSent] = useState(false);
+  const [blockedNotice, setBlockedNotice] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -229,6 +234,44 @@ function Chat() {
             Shared interest: {thread.sharedInterest}. Either of you can reveal, anytime. No pressure,
             ever.
           </p>
+
+          <div className="mt-4 rounded-2xl border border-line bg-card p-3">
+            <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+              Feeling uncomfortable?
+            </p>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setReporting(others[0]?.alias ?? thread.members[0]!.alias)}
+                className="rounded-full bg-coral/15 py-2.5 text-sm font-semibold text-coral"
+              >
+                Report
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const who = others[0]?.alias;
+                  if (!who) return;
+                  blockAlias(who);
+                  setBlockedNotice(who);
+                }}
+                className="rounded-full border border-line py-2.5 text-sm font-semibold"
+              >
+                Block
+              </button>
+            </div>
+            {blockedNotice ? (
+              <p className="mt-2 text-xs text-muted-foreground" role="status">
+                {blockedNotice} is blocked and this thread is closed.
+              </p>
+            ) : null}
+            {reportSent ? (
+              <p className="mt-2 text-xs text-muted-foreground" role="status">
+                Report sent. Moderators reply within 24 hours.
+              </p>
+            ) : null}
+          </div>
+
           <Link
             to="/letters"
             className="mt-3 rounded-2xl bg-butter px-4 py-3 text-center text-xs font-semibold text-butter-foreground transition-transform hover:-translate-y-0.5"
@@ -237,6 +280,26 @@ function Chat() {
           </Link>
         </aside>
       </div>
+
+      {reporting ? (
+        <ReportDialog
+          alias={reporting}
+          onClose={() => setReporting(null)}
+          onReport={(reason, note) => {
+            reportAlias(reporting, reason, note);
+            setReportSent(true);
+            setReporting(null);
+          }}
+          onBlock={() => {
+            reportAlias(reporting, "Blocked from thread", "");
+            blockAlias(reporting);
+            setBlockedNotice(reporting);
+            setReportSent(true);
+            setReporting(null);
+          }}
+        />
+      ) : null}
+
     </MistShell>
   );
 }

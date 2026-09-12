@@ -59,7 +59,7 @@ function Discover() {
         <section className="glass mt-8 rounded-3xl p-8 text-center">
           <h1 className="text-3xl font-extrabold tracking-tight">People you should meet</h1>
           <p className="mx-auto mt-3 max-w-md text-muted-foreground">
-            Verify your student ID first — recommendations only ever contain verified students.
+            Verify your student email first — recommendations only ever contain verified students.
           </p>
           <Link
             to="/join"
