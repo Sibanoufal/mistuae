@@ -120,7 +120,7 @@ function Index() {
           <h1 className="mt-5 animate-rise text-[2.75rem] leading-[0.92] font-extrabold tracking-tight text-balance sm:text-6xl xl:text-7xl">
             Ten campuses.
             <br />
-            <span className="font-serif font-normal italic">One letter a day.</span>
+            <span className="font-serif font-normal italic">Find friends.</span>
             <br />
             <span className="text-gradient">No names attached.</span>
           </h1>
