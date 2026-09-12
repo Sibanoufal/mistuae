@@ -29,16 +29,16 @@ import {
 export const Route = createFileRoute("/join")({
   head: () => ({
     meta: [
-      { title: "Verify with your student ID — Mist" },
+      { title: "Verify with your student email — Mist" },
       {
         name: "description",
         content:
-          "Upload your UAE university student ID photo to unlock anonymous pairing on Mist. Your ID stays private on your device.",
+          "Verify your UAE university student email to unlock anonymous pairing on Mist. Your address stays private.",
       },
-      { property: "og:title", content: "Verify with your student ID — Mist" },
+      { property: "og:title", content: "Verify with your student email — Mist" },
       {
         property: "og:description",
-        content: "Student ID verification unlocks anonymous pairing for UAE university students.",
+        content: "Student email verification unlocks anonymous pairing for UAE university students.",
       },
     ],
   }),
@@ -178,7 +178,7 @@ function Join() {
             Welcome to the post office, {alias}.
           </h1>
           <p className="mt-3 text-sm text-muted-foreground" role="status">
-            Your ID never leaves this device. Sorting your first letter…
+            Your student email stays private. Sorting your first letter…
           </p>
         </div>
       </MistShell>

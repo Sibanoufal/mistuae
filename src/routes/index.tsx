@@ -40,8 +40,8 @@ const CHIP_COLORS = [
 const STEPS = [
   {
     n: "01",
-    title: "Stamp your ID",
-    body: "One photo of your student ID. Checked once, kept on your device, never shown to a match.",
+    title: "Verify your email",
+    body: "A code to your university email. Checked once, never shown to a match.",
     tint: "bg-butter",
   },
   {
@@ -381,7 +381,7 @@ function Index() {
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
           <p className="text-sm text-muted-foreground">
             <strong className="text-ink">Students only.</strong> Every account is gated behind a
-            student ID photo from one of ten UAE universities.
+            verified student email from one of ten UAE universities.
           </p>
           <p className="text-sm text-muted-foreground">
             <strong className="text-ink">Nothing leaks.</strong> Your ID and real name stay on your

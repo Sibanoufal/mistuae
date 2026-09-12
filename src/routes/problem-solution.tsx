@@ -181,7 +181,7 @@ function ProblemSolution() {
           <div className="glass mt-4 rounded-[28px] p-6">
             <p className="text-lg text-pretty">
               <strong>Mist</strong> is secret pen pals for UAE university students. You verify once
-              with a student ID photo, then you are given a mask — an alias like{" "}
+              with your university student email, then you are given a mask — an alias like{" "}
               <em>Auburn Otter</em>. Mist pairs you anonymously with another verified student, or a
               small crew of them, around a shared interest. You choose up front how long the thread
               lasts: a few minutes, a day, or forever. You can lift your mask at any moment, and the

@@ -149,13 +149,13 @@ function Match() {
         <div className="glass mx-auto my-16 max-w-md rounded-[32px] p-8 text-center">
           <h1 className="text-2xl font-extrabold">Verify first</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Mist is students-only, so we need your student ID photo before matching you.
+            Mist is students-only, so we need your university email verified before matching you.
           </p>
           <Link
             to="/join"
             className="mt-5 inline-block rounded-full bg-ink px-6 py-3 text-sm font-semibold text-background"
           >
-            Verify my student ID
+            Verify my student email
           </Link>
         </div>
       </MistShell>
