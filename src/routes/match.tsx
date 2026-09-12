@@ -443,6 +443,73 @@ function Match() {
         ) : null}
       </div>
 
+      {expanded ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Full card for ${expanded.alias}`}
+          className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-ink/40 p-4 backdrop-blur-sm"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setExpanded(null);
+          }}
+        >
+          <article className="paper animate-pop my-8 w-full max-w-md rounded-[28px] p-6">
+            <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+              Masked student
+            </p>
+            <h2 className="mt-1 font-serif text-3xl">{expanded.alias}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {UNIVERSITY_SHORT[expanded.university]} · {expanded.year}
+            </p>
+            <p className="mt-4 font-serif text-2xl leading-snug text-pretty">“{expanded.line}”</p>
+            <dl className="mt-5 space-y-2 text-sm">
+              <div className="flex justify-between gap-3 rounded-2xl bg-background/70 px-3 py-2">
+                <dt className="text-muted-foreground">Shared interest</dt>
+                <dd className="text-right font-semibold">{expanded.interest}</dd>
+              </div>
+              <div className="flex justify-between gap-3 rounded-2xl bg-background/70 px-3 py-2">
+                <dt className="text-muted-foreground">Campus</dt>
+                <dd className="text-right font-semibold">{expanded.university}</dd>
+              </div>
+              <div className="flex justify-between gap-3 rounded-2xl bg-background/70 px-3 py-2">
+                <dt className="text-muted-foreground">Distance</dt>
+                <dd className="text-right text-xs font-semibold">
+                  {profile
+                    ? travelNote(profile.university, expanded.university)
+                    : CAMPUS_AREA[expanded.university]}
+                </dd>
+              </div>
+            </dl>
+            <div className="mt-6 grid gap-2 sm:grid-cols-2">
+              <button
+                onClick={() => {
+                  setExpanded(null);
+                  resolve("like");
+                }}
+                className="rounded-full bg-coral px-5 py-3 text-sm font-semibold text-coral-foreground"
+              >
+                ✎ Write to them
+              </button>
+              <button
+                onClick={() => {
+                  setExpanded(null);
+                  resolve("pass");
+                }}
+                className="rounded-full border border-line bg-card px-5 py-3 text-sm font-semibold"
+              >
+                ✕ Pass
+              </button>
+            </div>
+            <button
+              onClick={() => setExpanded(null)}
+              className="mt-2 w-full rounded-full px-5 py-2.5 text-sm font-semibold text-muted-foreground"
+            >
+              Back to the deck
+            </button>
+          </article>
+        </div>
+      ) : null}
+
       {/* Postmarked match modal */}
       {matched ? (
         <div
