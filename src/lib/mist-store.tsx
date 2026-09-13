@@ -831,7 +831,7 @@ function loadState(): State {
       ratings: parsed.ratings ?? [],
     };
   } catch {
-    return EMPTY_STATE();
+    return DEMO_STATE();
   }
 }
 
