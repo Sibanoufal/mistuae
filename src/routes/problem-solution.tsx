@@ -109,9 +109,7 @@ function ProblemSolution() {
   return (
     <MistShell>
       <article className="py-8">
-        <p className="font-mono text-[11px] tracking-widest text-coral uppercase">
-          Designathon deliverable
-        </p>
+       
         <h1 className="mt-3 max-w-[20ch] text-4xl leading-tight font-extrabold tracking-tight text-balance sm:text-5xl">
           Problem &amp; Solution
         </h1>
