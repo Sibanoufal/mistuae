@@ -382,8 +382,8 @@ export const DEMO_PROFILE = (): Profile => ({
   realName: "Demo Student",
   crossCampusOnly: false,
   campusPref: "any",
-  faculty: "Engineering & Computing",
-  course: "Computer Science",
+  faculty: "Computer Science & IT",
+  course: "Human-Computer Interaction",
   purposes: ["project", "study", "coffee"],
   slots: ["Tue-pm", "Wed-eve", "Sat-am"],
   gender: "undisclosed",
@@ -817,7 +817,7 @@ function loadState(): State {
   if (typeof window === "undefined") return EMPTY_STATE();
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return EMPTY_STATE();
+    if (!raw) return DEMO_STATE();
     const parsed = JSON.parse(raw) as Partial<State>;
     return {
       profile: parsed.profile ?? null,
