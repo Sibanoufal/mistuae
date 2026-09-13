@@ -320,7 +320,7 @@ type State = {
   ratings: Rating[];
 };
 
-const STORAGE_KEY = "mist.state.v4";
+const STORAGE_KEY = "mist.state.v5";
 
 const SEEDED_ROOMS = (): Room[] =>
   SEED_ROOMS.map((r) => ({
@@ -367,6 +367,31 @@ const EMPTY_STATE = (): State => ({
   reports: [],
   ratings: [],
 });
+
+/**
+ * Ready-made verified student so anyone opening Mist lands inside the product
+ * with every feature reachable, without waiting on an email code.
+ */
+export const DEMO_PROFILE = (): Profile => ({
+  alias: "Amber Heron",
+  university: "Heriot-Watt University Dubai",
+  year: "Year 3",
+  interests: ["Design", "Coding", "Film"],
+  email: "demo@hw.ac.uk",
+  verified: true,
+  realName: "Demo Student",
+  crossCampusOnly: false,
+  campusPref: "any",
+  faculty: "Computer Science & IT",
+  course: "Human-Computer Interaction",
+  purposes: ["project", "study", "coffee"],
+  slots: ["Tue-pm", "Wed-eve", "Sat-am"],
+  gender: "undisclosed",
+  matchWith: "everyone",
+  discoverable: true,
+});
+
+const DEMO_STATE = (): State => ({ ...EMPTY_STATE(), profile: DEMO_PROFILE() });
 
 const ADJECTIVES = [
   "Auburn",
@@ -792,7 +817,7 @@ function loadState(): State {
   if (typeof window === "undefined") return EMPTY_STATE();
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return EMPTY_STATE();
+    if (!raw) return DEMO_STATE();
     const parsed = JSON.parse(raw) as Partial<State>;
     return {
       profile: parsed.profile ?? null,
@@ -806,7 +831,7 @@ function loadState(): State {
       ratings: parsed.ratings ?? [],
     };
   } catch {
-    return EMPTY_STATE();
+    return DEMO_STATE();
   }
 }
 

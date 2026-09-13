@@ -116,10 +116,6 @@ function Join() {
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!emailVerified) {
-      setError("Verify your student email first — it's how we keep Mist students-only.");
-      return;
-    }
     if (realName.trim().length < 2) {
       setError("Add the name you'd reveal later (2 characters or more).");
       return;
@@ -236,7 +232,7 @@ function Join() {
             </select>
 
             <label htmlFor="email" className="mt-4 block text-sm font-semibold">
-              Student email
+              Student email <span className="font-normal text-muted-foreground">(optional in this demo)</span>
             </label>
             <div className="mt-2 flex flex-col gap-2 sm:flex-row">
               <input

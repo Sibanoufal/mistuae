@@ -75,18 +75,26 @@ export function MistShell({ children }: { children: ReactNode }) {
             </ul>
 
             {profile ? (
-              <Link
-                to="/threads"
-                className="flex shrink-0 items-center gap-2 rounded-full border border-line bg-card px-2.5 py-1.5 text-sm font-semibold transition-transform hover:-translate-y-0.5 sm:px-3"
-              >
-                <span className="grid size-7 place-items-center rounded-full bg-gradient-to-br from-teal to-lilac font-mono text-[10px] text-teal-foreground">
-                  {profile.alias
-                    .split(" ")
-                    .map((w) => w[0])
-                    .join("")}
-                </span>
-                <span className="hidden sm:inline">{profile.alias}</span>
-              </Link>
+              <div className="flex shrink-0 items-center gap-2">
+                <Link
+                  to="/threads"
+                  className="flex shrink-0 items-center gap-2 rounded-full border border-line bg-card px-2.5 py-1.5 text-sm font-semibold transition-transform hover:-translate-y-0.5 sm:px-3"
+                >
+                  <span className="grid size-7 place-items-center rounded-full bg-gradient-to-br from-teal to-lilac font-mono text-[10px] text-teal-foreground">
+                    {profile.alias
+                      .split(" ")
+                      .map((w) => w[0])
+                      .join("")}
+                  </span>
+                  <span className="hidden sm:inline">{profile.alias}</span>
+                </Link>
+                <Link
+                  to="/join"
+                  className="hidden shrink-0 rounded-full bg-butter px-3 py-1.5 font-mono text-[10px] tracking-widest text-butter-foreground uppercase transition-transform hover:-translate-y-0.5 lg:inline-block"
+                >
+                  Demo account · edit
+                </Link>
+              </div>
             ) : (
               <Link
                 to="/join"
