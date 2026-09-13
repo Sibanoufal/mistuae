@@ -116,10 +116,6 @@ function Join() {
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!emailVerified) {
-      setError("Verify your student email first — it's how we keep Mist students-only.");
-      return;
-    }
     if (realName.trim().length < 2) {
       setError("Add the name you'd reveal later (2 characters or more).");
       return;

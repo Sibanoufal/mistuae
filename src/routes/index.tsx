@@ -118,14 +118,15 @@ function Index() {
             Verified students · 10 UAE campuses
           </span>
           <h1 className="mt-5 animate-rise text-[2.75rem] leading-[0.92] font-extrabold tracking-tight text-balance sm:text-6xl xl:text-7xl">
-            Every person here is a
+            Real students.
             <br />
-            <span className="font-serif font-normal italic">verified student</span>
+            <span className="font-serif font-normal italic">No names.</span>
             <br />
-            <span className="text-gradient">at a real UAE university.</span>
+            <span className="text-gradient">Not yet.</span>
           </h1>
           <p className="mt-5 max-w-[46ch] animate-rise text-base text-pretty text-muted-foreground sm:text-lg">
-            You just get to know them before names get in the way.
+            Every account is a verified UAE university student — you just meet the person before the
+            name.
           </p>
           <div className="mt-7 flex animate-rise flex-wrap items-center gap-3">
             <Link
