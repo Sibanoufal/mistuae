@@ -1,13 +1,12 @@
 import {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useState,
-  type Context,
   type ReactNode,
 } from "react";
+import { MistContext } from "./mist-context";
+export { useMist } from "./mist-context";
 import { SEED_PEOPLE, SEED_ROOMS, type Gender, type MatchWith, type PurposeId } from "./mist-social";
 
 export const UNIVERSITIES = [
@@ -830,7 +829,7 @@ const REPLIES = [
   "tell me one thing about your week that nobody else knows",
 ];
 
-type Ctx = {
+export type MistContextValue = {
   ready: boolean;
   profile: Profile | null;
   threads: Thread[];
@@ -871,17 +870,6 @@ type Ctx = {
   proposeGreatReveal: () => void;
   skipADay: () => void;
 };
-
-// Keep the context identity stable when this module is replaced during a Vite
-// live update. Without this, an already-mounted provider can hold the previous
-// context while freshly updated routes read a new one.
-const MistContext =
-  (import.meta.hot?.data.mistContext as Context<Ctx | null> | undefined) ??
-  createContext<Ctx | null>(null);
-
-if (import.meta.hot) {
-  import.meta.hot.data.mistContext = MistContext;
-}
 
 function campusPool(profile: Profile | null): University[] {
   if (!profile) return [...UNIVERSITIES];
@@ -945,7 +933,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const sendLetter = useCallback<Ctx["sendLetter"]>((subject, body, seal) => {
+  const sendLetter = useCallback<MistContextValue["sendLetter"]>((subject, body, seal) => {
     const s0 = subject.trim().slice(0, 80);
     const b0 = body.trim().slice(0, 2000);
     if (!b0) return;
@@ -987,7 +975,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
     }, DEMO_DELIVERY_MS);
   }, []);
 
-  const markLetterRead = useCallback<Ctx["markLetterRead"]>((id) => {
+  const markLetterRead = useCallback<MistContextValue["markLetterRead"]>((id) => {
     setState((s) => ({
       ...s,
       letters: s.letters.map((l) => (l.id === id ? { ...l, read: true } : l)),
@@ -1022,7 +1010,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
     }, 3200);
   }, []);
 
-  const createThread = useCallback<Ctx["createThread"]>(
+  const createThread = useCallback<MistContextValue["createThread"]>(
     ({ mode, duration, sharedInterest, partner, purpose, groupSize }) => {
       const me: Member = {
         alias: state.profile?.alias ?? randomAlias(),
@@ -1078,7 +1066,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
     [state.profile],
   );
 
-  const sendMessage = useCallback<Ctx["sendMessage"]>((threadId, text) => {
+  const sendMessage = useCallback<MistContextValue["sendMessage"]>((threadId, text) => {
     const trimmed = text.trim().slice(0, 500);
     if (!trimmed) return;
     setState((s) => ({
@@ -1118,7 +1106,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
     }, delay);
   }, []);
 
-  const offerReveal = useCallback<Ctx["offerReveal"]>((threadId) => {
+  const offerReveal = useCallback<MistContextValue["offerReveal"]>((threadId) => {
     setState((s) => ({
       ...s,
       threads: s.threads.map((t) =>
@@ -1169,7 +1157,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
     }, 2600);
   }, []);
 
-  const extendThread = useCallback<Ctx["extendThread"]>((threadId) => {
+  const extendThread = useCallback<MistContextValue["extendThread"]>((threadId) => {
     setState((s) => ({
       ...s,
       threads: s.threads.map((t) =>
@@ -1199,21 +1187,21 @@ export function MistProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
-  const closeThread = useCallback<Ctx["closeThread"]>((threadId) => {
+  const closeThread = useCallback<MistContextValue["closeThread"]>((threadId) => {
     setState((s) => ({
       ...s,
       threads: s.threads.map((t) => (t.id === threadId ? { ...t, closed: true } : t)),
     }));
   }, []);
 
-  const addPost = useCallback<Ctx["addPost"]>((p) => {
+  const addPost = useCallback<MistContextValue["addPost"]>((p) => {
     setState((s) => ({
       ...s,
       posts: [{ ...p, id: uid(), responses: 0, joined: false, mine: true }, ...s.posts],
     }));
   }, []);
 
-  const toggleJoin = useCallback<Ctx["toggleJoin"]>((postId) => {
+  const toggleJoin = useCallback<MistContextValue["toggleJoin"]>((postId) => {
     setState((s) => ({
       ...s,
       posts: s.posts.map((p) =>
@@ -1225,7 +1213,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
   }, []);
 
   /** Gradual reveal: anonymous → basics (campus, course, year) → names. */
-  const advanceReveal = useCallback<Ctx["advanceReveal"]>((threadId) => {
+  const advanceReveal = useCallback<MistContextValue["advanceReveal"]>((threadId) => {
     setState((s) => ({
       ...s,
       threads: s.threads.map((t) => {
@@ -1258,7 +1246,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
-  const rateInteraction = useCallback<Ctx["rateInteraction"]>((threadId, alias, tags) => {
+  const rateInteraction = useCallback<MistContextValue["rateInteraction"]>((threadId, alias, tags) => {
     if (!tags.length) return;
     setState((s) => ({
       ...s,
@@ -1267,7 +1255,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
-  const sendRoomMessage = useCallback<Ctx["sendRoomMessage"]>((roomId, text) => {
+  const sendRoomMessage = useCallback<MistContextValue["sendRoomMessage"]>((roomId, text) => {
     const trimmed = text.trim().slice(0, 500);
     if (!trimmed) return;
     setState((s) => ({
@@ -1305,7 +1293,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
-  const toggleRoom = useCallback<Ctx["toggleRoom"]>((roomId) => {
+  const toggleRoom = useCallback<MistContextValue["toggleRoom"]>((roomId) => {
     setState((s) => ({
       ...s,
       rooms: s.rooms.map((r) =>
@@ -1316,7 +1304,7 @@ export function MistProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
-  const blockAlias = useCallback<Ctx["blockAlias"]>((alias) => {
+  const blockAlias = useCallback<MistContextValue["blockAlias"]>((alias) => {
     setState((s) => ({
       ...s,
       blocked: s.blocked.includes(alias) ? s.blocked : [alias, ...s.blocked],
@@ -1326,22 +1314,22 @@ export function MistProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
-  const unblockAlias = useCallback<Ctx["unblockAlias"]>((alias) => {
+  const unblockAlias = useCallback<MistContextValue["unblockAlias"]>((alias) => {
     setState((s) => ({ ...s, blocked: s.blocked.filter((a) => a !== alias) }));
   }, []);
 
-  const reportAlias = useCallback<Ctx["reportAlias"]>((alias, reason, note) => {
+  const reportAlias = useCallback<MistContextValue["reportAlias"]>((alias, reason, note) => {
     setState((s) => ({
       ...s,
       reports: [{ alias, reason, note: note.trim().slice(0, 500), at: Date.now() }, ...s.reports],
     }));
   }, []);
 
-  const setDiscoverable = useCallback<Ctx["setDiscoverable"]>((on) => {
+  const setDiscoverable = useCallback<MistContextValue["setDiscoverable"]>((on) => {
     setState((s) => (s.profile ? { ...s, profile: { ...s.profile, discoverable: on } } : s));
   }, []);
 
-  const value = useMemo<Ctx>(
+  const value = useMemo<MistContextValue>(
     () => ({
       ready,
       profile: state.profile,
@@ -1405,12 +1393,6 @@ export function MistProvider({ children }: { children: ReactNode }) {
   );
 
   return <MistContext.Provider value={value}>{children}</MistContext.Provider>;
-}
-
-export function useMist() {
-  const ctx = useContext(MistContext);
-  if (!ctx) throw new Error("useMist must be used inside MistProvider");
-  return ctx;
 }
 
 export function formatCountdown(ms: number) {
