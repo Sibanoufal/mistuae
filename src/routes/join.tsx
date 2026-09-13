@@ -529,8 +529,9 @@ function Join() {
 
           <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
             <p className="max-w-[42ch] text-xs text-muted-foreground">
-              By continuing you confirm this ID is yours. You stay anonymous until you decide
-              otherwise.
+              First messages are the hardest part of meeting someone new — starting anonymous
+              removes that pressure, while university email verification means you&apos;re never
+              actually talking to a stranger.
             </p>
             <button
               type="submit"

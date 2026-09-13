@@ -118,15 +118,14 @@ function Index() {
             Verified students · 10 UAE campuses
           </span>
           <h1 className="mt-5 animate-rise text-[2.75rem] leading-[0.92] font-extrabold tracking-tight text-balance sm:text-6xl xl:text-7xl">
-            Ten campuses.
+            Every person here is a
             <br />
-            <span className="font-serif font-normal italic">Find friends.</span>
+            <span className="font-serif font-normal italic">verified student</span>
             <br />
-            <span className="text-gradient">No names attached.</span>
+            <span className="text-gradient">at a real UAE university.</span>
           </h1>
           <p className="mt-5 max-w-[46ch] animate-rise text-base text-pretty text-muted-foreground sm:text-lg">
-            Mist is secret pen pals for verified UAE students. Write slowly, stay masked, and
-            reveal only if you both decide to.
+            You just get to know them before names get in the way.
           </p>
           <div className="mt-7 flex animate-rise flex-wrap items-center gap-3">
             <Link
