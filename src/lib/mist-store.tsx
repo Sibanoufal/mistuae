@@ -5,6 +5,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  type Context,
   type ReactNode,
 } from "react";
 import { SEED_PEOPLE, SEED_ROOMS, type Gender, type MatchWith, type PurposeId } from "./mist-social";
@@ -875,7 +876,7 @@ type Ctx = {
 // live update. Without this, an already-mounted provider can hold the previous
 // context while freshly updated routes read a new one.
 const MistContext =
-  (import.meta.hot?.data.mistContext as React.Context<Ctx | null> | undefined) ??
+  (import.meta.hot?.data.mistContext as Context<Ctx | null> | undefined) ??
   createContext<Ctx | null>(null);
 
 if (import.meta.hot) {
