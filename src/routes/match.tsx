@@ -80,7 +80,7 @@ function Match() {
   const navigate = useNavigate();
   const { profile, createThread, threads, ready } = useMist();
   const [mode, setMode] = useState<ChatMode>("pair");
-  const [duration, setDuration] = useState<ChatDuration>("day");
+  const [duration, setDuration] = useState<ChatDuration>("minutes");
   const [areas, setAreas] = useState<string[]>(AREAS);
   const [deck, setDeck] = useState<Candidate[]>([]);
   const [passed, setPassed] = useState(0);

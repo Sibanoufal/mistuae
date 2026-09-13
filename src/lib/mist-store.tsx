@@ -339,6 +339,23 @@ const SEEDED_ROOMS = (): Room[] =>
     })),
   }));
 
+function mergeRoomHistory(rooms: Room[]): Room[] {
+  const currentById = new Map(rooms.map((room) => [room.id, room]));
+  return SEEDED_ROOMS().map((seeded) => {
+    const current = currentById.get(seeded.id);
+    if (!current) return seeded;
+    const currentIds = new Set(current.messages.map((message) => message.id));
+    return {
+      ...seeded,
+      ...current,
+      messages: [
+        ...seeded.messages.filter((message) => !currentIds.has(message.id)),
+        ...current.messages,
+      ].sort((a, b) => a.at - b.at),
+    };
+  });
+}
+
 const EMPTY_STATE = (): State => ({
   profile: null,
   threads: [],
@@ -783,7 +800,7 @@ function loadState(): State {
       posts: parsed.posts?.length ? parsed.posts : SEED_POSTS,
       penPal: parsed.penPal ?? null,
       letters: parsed.letters ?? [],
-      rooms: parsed.rooms?.length ? parsed.rooms : SEEDED_ROOMS(),
+      rooms: parsed.rooms?.length ? mergeRoomHistory(parsed.rooms) : SEEDED_ROOMS(),
       blocked: parsed.blocked ?? [],
       reports: parsed.reports ?? [],
       ratings: parsed.ratings ?? [],
