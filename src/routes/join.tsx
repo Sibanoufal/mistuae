@@ -232,7 +232,7 @@ function Join() {
             </select>
 
             <label htmlFor="email" className="mt-4 block text-sm font-semibold">
-              Student email
+              Student email <span className="font-normal text-muted-foreground">(optional in this demo)</span>
             </label>
             <div className="mt-2 flex flex-col gap-2 sm:flex-row">
               <input
