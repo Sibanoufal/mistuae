@@ -49,9 +49,7 @@ export function MistShell({ children }: { children: ReactNode }) {
                 M
               </span>
               <span className="truncate text-lg font-extrabold tracking-tight">Mist</span>
-              <span className="mt-1 hidden font-mono text-[10px] tracking-widest text-muted-foreground uppercase sm:inline">
-                UAE · 10 campuses
-              </span>
+              
             </Link>
 
             <ul className="order-3 col-span-2 -mx-4 flex items-center gap-1 overflow-x-auto px-4 pb-1 text-sm font-medium text-muted-foreground [scrollbar-width:none] md:order-none md:col-auto md:mx-0 md:gap-2 md:overflow-visible md:px-0 md:pb-0">
