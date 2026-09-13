@@ -1461,3 +1461,11 @@ export function passesGenderFilter(profile: Profile | null, p: Person) {
 }
 
 export { SEED_PEOPLE };
+
+// This module owns the React context. If Vite hot-swaps it on its own, pages
+// re-import a fresh context while the provider above still holds the old one,
+// which surfaces as "useMist must be used inside MistProvider". Force a full
+// reload instead of a partial hot update.
+if (import.meta.hot) {
+  import.meta.hot.invalidate();
+}
