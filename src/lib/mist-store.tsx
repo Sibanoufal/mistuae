@@ -5,6 +5,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  type Context,
   type ReactNode,
 } from "react";
 import { SEED_PEOPLE, SEED_ROOMS, type Gender, type MatchWith, type PurposeId } from "./mist-social";
@@ -871,7 +872,16 @@ type Ctx = {
   skipADay: () => void;
 };
 
-const MistContext = createContext<Ctx | null>(null);
+// Keep the context identity stable when this module is replaced during a Vite
+// live update. Without this, an already-mounted provider can hold the previous
+// context while freshly updated routes read a new one.
+const MistContext =
+  (import.meta.hot?.data.mistContext as Context<Ctx | null> | undefined) ??
+  createContext<Ctx | null>(null);
+
+if (import.meta.hot) {
+  import.meta.hot.data.mistContext = MistContext;
+}
 
 function campusPool(profile: Profile | null): University[] {
   if (!profile) return [...UNIVERSITIES];
@@ -1478,11 +1488,3 @@ export function passesGenderFilter(profile: Profile | null, p: Person) {
 }
 
 export { SEED_PEOPLE };
-
-// This module owns the React context. If Vite hot-swaps it on its own, pages
-// re-import a fresh context while the provider above still holds the old one,
-// which surfaces as "useMist must be used inside MistProvider". Force a full
-// reload instead of a partial hot update.
-if (import.meta.hot) {
-  import.meta.hot.invalidate();
-}
